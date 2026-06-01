@@ -3,7 +3,7 @@ import 'package:los_pibbles_movies_app/config/router/app_router.dart';
 import 'package:los_pibbles_movies_app/theme/app_theme.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
