@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 //creamos una clase paraa agrupar las configuraciones de nuestro tema.
 class AppTheme {
