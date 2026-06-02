@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 //creamos una clase paraa agrupar las configuraciones de nuestro tema.
 class AppTheme {
@@ -7,8 +8,20 @@ class AppTheme {
   ThemeData getTheme() => ThemeData(
     //useMaterial3 es una prpiedad que nos permite activar el material design 3
     useMaterial3: true,
-    //colorSchemeSed es una propiedad que ayuda a definir los colores de nuestra app, ayuda
-    // a definir una paleta de colores 0XFF2862F5
-    colorSchemeSeed: const Color(0xFF4B39EF),
+    colorScheme: ColorScheme(
+      brightness: Brightness.dark,
+      primary: AppColors.primary500,
+      onPrimary: AppColors.white,
+      secondary: AppColors.secondary500,
+      onSecondary: AppColors.white,
+      surface: AppColors.black,
+      onSurface: AppColors.white,
+      error: AppColors.error,
+      onError: AppColors.white,
+      tertiary: AppColors.accent500,
+      onTertiary: AppColors.white,
+    ),
+    scaffoldBackgroundColor: AppColors.black,
+    cardColor: AppColors.secondary900,
   );
 }

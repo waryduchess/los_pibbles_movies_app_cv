@@ -1,0 +1,191 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../widgets/button_widget.dart';
+import '../../widgets/input_widget.dart';
+
+class LoginScreen extends StatefulWidget {
+  static const name = 'login--screen';
+
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFF1A1B2E),
+            ),
+          ),
+
+          Positioned(
+            right: 0,
+            top: 0,
+            width: MediaQuery.of(context).size.width * 0.6,
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment(0.6, 0.4),
+                  radius: 1.063,
+                  colors: [
+                    Color.fromRGBO(255, 92, 138, 0.07),
+                    Colors.transparent,
+                  ],
+                  stops: [0, 0.5],
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            left: 0,
+            top: 0,
+            width: MediaQuery.of(context).size.width * 0.6,
+            height: MediaQuery.of(context).size.height * 0.55,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment(-0.6, -0.4),
+                  radius: 1.063,
+                  colors: [
+                    Color.fromRGBO(103, 92, 255, 0.094),
+                    Colors.transparent,
+                  ],
+                  stops: [0, 0.55],
+                ),
+              ),
+            ),
+          ),
+
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              child: Center(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 40),
+
+                      Center(
+                        child: Image.asset(
+                          'lib/resources/images/logo.png',
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      Text(
+                        'Pibble Movies',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.headlineMedium,
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      Text(
+                        'Descubre y resume el cine',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      InputWidget(
+                        label: 'Correo electrónico *',
+                        hintText: 'tu@ejemplo.com',
+                        controller: _emailController,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      InputWidget(
+                        label: 'Contraseña *',
+                        hintText: '••••••••',
+                        controller: _passwordController,
+                        obscureText: true,
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ButtonWidget(
+                          text: '¿Olvidaste tu contraseña?',
+                          type: ButtonType.tertiary,
+                          onPressed: () {},
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      ButtonWidget(
+                        text: 'Iniciar Sesión',
+                        type: ButtonType.primary,
+                        onPressed: () {},
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      ButtonWidget(
+                        text: 'Registrarse',
+                        type: ButtonType.secondary,
+                        onPressed: () {
+                          context.go('/register');
+                        },
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: theme.dividerColor,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.fingerprint,
+                          size: 32,
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
