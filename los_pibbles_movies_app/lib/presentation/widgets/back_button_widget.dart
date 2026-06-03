@@ -3,14 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../resources/color/colors.dart';
 
-
 class BackButtonWidget extends StatelessWidget {
   final String route;
 
-  const BackButtonWidget({
-    super.key,
-    required this.route,
-  });
+  const BackButtonWidget({super.key, required this.route});
 
   @override
   Widget build(BuildContext context) {

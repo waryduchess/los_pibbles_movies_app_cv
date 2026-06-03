@@ -29,9 +29,7 @@ class CheckboxWidget extends StatelessWidget {
             activeColor: AppColors.accent600,
             side: const BorderSide(color: AppColors.accent600),
           ),
-          Expanded(
-            child: Text(label, style: theme.textTheme.bodyMedium),
-          ),
+          Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );
