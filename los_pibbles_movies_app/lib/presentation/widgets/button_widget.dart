@@ -13,12 +13,14 @@ class ButtonWidget extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final ButtonType type;
+  final Color? textColor;
 
   const ButtonWidget({
     super.key,
     required this.text,
     required this.onPressed,
     this.type = ButtonType.primary,
+    this.textColor,
   });
 
   @override
@@ -121,7 +123,7 @@ class ButtonWidget extends StatelessWidget {
                 if (states.contains(WidgetState.hovered)) {
                   return AppColors.accent500;
                 }
-                return AppColors.primary500;
+                return textColor ?? AppColors.primary500;
               },
             ),
           ),
