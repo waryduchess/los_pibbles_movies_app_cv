@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import '../../widgets/button_widget.dart';
 import '../../widgets/input_widget.dart';
+import '../../widgets/gradient_background_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   static const name = 'login--screen';
@@ -28,53 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: AppColors.secondary900,
       body: Stack(
         children: [
           Container(
             decoration: const BoxDecoration(
-              color: Color(0xFF1A1B2E),
+              color: AppColors.secondary900,
             ),
           ),
-
-          Positioned(
-            right: 0,
-            top: 0,
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: MediaQuery.of(context).size.height * 0.6,
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(0.6, 0.4),
-                  radius: 1.063,
-                  colors: [
-                    Color.fromRGBO(255, 92, 138, 0.07),
-                    Colors.transparent,
-                  ],
-                  stops: [0, 0.5],
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            left: 0,
-            top: 0,
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: MediaQuery.of(context).size.height * 0.55,
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(-0.6, -0.4),
-                  radius: 1.063,
-                  colors: [
-                    Color.fromRGBO(103, 92, 255, 0.094),
-                    Colors.transparent,
-                  ],
-                  stops: [0, 0.55],
-                ),
-              ),
-            ),
-          ),
+          const GradientBackgroundWidget(),
 
           SafeArea(
             child: SingleChildScrollView(
@@ -138,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         alignment: Alignment.centerRight,
                         child: ButtonWidget(
                           text: '¿Olvidaste tu contraseña?',
+                          textColor: AppColors.accent600,
                           type: ButtonType.tertiary,
                           onPressed: () {},
                         ),

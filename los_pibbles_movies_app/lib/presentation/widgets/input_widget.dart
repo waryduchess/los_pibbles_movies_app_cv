@@ -52,10 +52,21 @@ class _InputWidgetState extends State<InputWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: AppStyles.label.copyWith(color: AppColors.white),
+        RichText(
+  text: TextSpan(
+    children: [
+      TextSpan(
+        text: widget.label.replaceAll(' *', ''),
+        style: AppStyles.label.copyWith(color: AppColors.white),
+      ),
+      if (widget.label.contains('*'))
+        TextSpan(
+          text: ' *',
+          style: AppStyles.label.copyWith(color: AppColors.accent600),
         ),
+    ],
+  ),
+),
         const SizedBox(height: 8),
         TextFormField(
           controller: widget.controller,
