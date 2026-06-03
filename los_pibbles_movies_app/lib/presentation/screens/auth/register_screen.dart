@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       InputWidget(
                         label: 'Correo electrónico *',
-                        hintText: 'tu@ejemplo.com',
+                        hintText: 'isa@email.com',
                         controller: TextEditingController(),
                       ),
                       const SizedBox(height: 16),
