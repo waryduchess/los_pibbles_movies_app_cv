@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       InputWidget(
                         label: 'Correo electrónico *',
-                        hintText: 'tu@ejemplo.com',
+                        hintText: 'isa@email.com',
                         controller: _emailController,
                       ),
 
