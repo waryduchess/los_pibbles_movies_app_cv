@@ -4,6 +4,7 @@ import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import '../../widgets/button_widget.dart';
 import '../../widgets/input_widget.dart';
 import '../../widgets/gradient_background_widget.dart';
+import '../../widgets/text_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   static const name = 'login--screen';
@@ -65,18 +66,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
 
-                      Text(
-                        'Pibble Movies',
+                      // H1 — Título principal
+                      const AppH1(
+                        text: 'Pibble Movies',
                         textAlign: TextAlign.center,
-                        style: theme.textTheme.headlineMedium,
                       ),
 
                       const SizedBox(height: 8),
 
-                      Text(
-                        'Descubre y resume el cine',
+                      // BodySm — Subtítulo
+                      const AppBodySm(
+                        text: 'Descubre y resume el cine',
                         textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyMedium,
                       ),
 
                       const SizedBox(height: 30),

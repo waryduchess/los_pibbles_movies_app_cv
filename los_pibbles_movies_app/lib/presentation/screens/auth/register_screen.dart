@@ -6,7 +6,7 @@ import '../../widgets/checkbox_widget.dart';
 import '../../widgets/gradient_background_widget.dart';
 import '../../widgets/input_widget.dart';
 import '../../widgets/button_widget.dart';
-
+import '../../widgets/text_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const name = 'register--screen';
@@ -22,24 +22,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: AppColors.secondary900,
       appBar: AppBar(
         backgroundColor: AppColors.secondary900,
         elevation: 0,
-        leading: const BackButtonWidget(route: '/login'), 
-        title: Text(
-          'Crear Cuenta',
-          style: theme.textTheme.headlineMedium,
+        leading: const BackButtonWidget(route: '/login'),
+
+        // H2 — Header de pantalla
+        title: const AppH2(
+          text: 'Crear Cuenta',
+          textAlign: TextAlign.center,
         ),
         centerTitle: true,
       ),
       body: Stack(
         children: [
-        
-          const GradientBackgroundWidget(), 
+          const GradientBackgroundWidget(),
 
           SafeArea(
             child: SingleChildScrollView(
@@ -88,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      CheckboxWidget(     
+                      CheckboxWidget(
                         value: _termsAccepted,
                         label: 'Acepto los términos y condiciones',
                         onChanged: (value) =>
