@@ -1,8 +1,6 @@
 //Importamos goRouter para manejar la navegacion de la App.
 import 'package:go_router/go_router.dart';
-import 'package:los_pibbles_movies_app/presentation/screens/auth/login_screen.dart';
-import 'package:los_pibbles_movies_app/presentation/screens/auth/register_screen.dart';
-import 'package:los_pibbles_movies_app/presentation/screens/movies/home_screen.dart';
+import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
 
 //Al usar goRouter nos ayuda mucho a que nosostros no tengamos que hacer config
 //especial mentel si lo queremos usar en la web
