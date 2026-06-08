@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
-import 'package:los_pibbles_movies_app/widgets/back_button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/checkbox_widget.dart';
+//import 'package:los_pibbles_movies_app/widgets/back_button_widget.dart';
+//import 'package:los_pibbles_movies_app/widgets/checkbox_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/input_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/button_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/text_widget.dart';
+
 class LoginScreen extends StatefulWidget {
   static const name = 'login--screen';
 
@@ -36,18 +37,13 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: AppColors.secondary900,
-            ),
+            decoration: const BoxDecoration(color: AppColors.secondary900),
           ),
           const GradientBackgroundWidget(),
 
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Center(
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 420),
@@ -134,14 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: theme.dividerColor,
-                          ),
+                          border: Border.all(color: theme.dividerColor),
                         ),
-                        child: const Icon(
-                          Icons.fingerprint,
-                          size: 32,
-                        ),
+                        child: const Icon(Icons.fingerprint, size: 32),
                       ),
 
                       const SizedBox(height: 12),

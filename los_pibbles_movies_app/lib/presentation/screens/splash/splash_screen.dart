@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:go_router/go_router.dart';
 
-// 🌟 Referencia global para que el audio sobreviva a la navegación
+//  Referencia global para que el audio sobreviva a la navegación
 final AudioPlayer splashAudioPlayer = AudioPlayer();
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +16,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   // Controladores de animación
   late AnimationController _mainController;
   late AnimationController _loadingController;
@@ -46,53 +47,146 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   }
 
   void _setupAnimations() {
-    // 🎬 Controlador principal (Dura 3 segundos exactos)
+    // Controlador principal (Dura 3 segundos exactos)
     _mainController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
     );
 
-    // 🎬 Controlador para la barra de carga infinita (1.6s)
+    // Controlador para la barra de carga infinita (1.6s)
     _loadingController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1600),
     )..repeat();
 
     // --- ANIMACIONES DEL RESPLANDOR (Termina a los 2.4s -> 80% de la animación) ---
-    _glowOpacity = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.7).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 0.7, end: 0.35).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
-    ]).animate(CurvedAnimation(parent: _mainController, curve: const Interval(0.0, 0.8)));
+    _glowOpacity =
+        TweenSequence<double>([
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 0.0,
+              end: 0.7,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 50,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 0.7,
+              end: 0.35,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 50,
+          ),
+        ]).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.0, 0.8),
+          ),
+        );
 
-    _glowScale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.6, end: 1.4).chain(CurveTween(curve: Curves.easeOut)), weight: 60),
-      TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.6).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
-    ]).animate(CurvedAnimation(parent: _mainController, curve: const Interval(0.0, 0.8)));
+    _glowScale =
+        TweenSequence<double>([
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 0.6,
+              end: 1.4,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 60,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.4,
+              end: 1.6,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 40,
+          ),
+        ]).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.0, 0.8),
+          ),
+        );
 
     // --- ANIMACIONES DEL LOGO (Termina a los 2.8s -> 93% de la animación) ---
-    _logoScale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.4, end: 1.1).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: 1.1, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)), weight: 20),
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.04).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
-      TweenSequenceItem(tween: Tween(begin: 1.04, end: 1.0).chain(CurveTween(curve: Curves.easeOut)), weight: 18),
-    ]).animate(CurvedAnimation(parent: _mainController, curve: const Interval(0.0, 0.93)));
+    _logoScale =
+        TweenSequence<double>([
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 0.4,
+              end: 1.1,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 30,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.1,
+              end: 1.0,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
+            weight: 20,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.0,
+              end: 1.04,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
+            weight: 25,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.04,
+              end: 1.0,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 18,
+          ),
+        ]).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.0, 0.93),
+          ),
+        );
 
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _mainController, curve: const Interval(0.0, 0.3, curve: Curves.easeOut))
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
+      ),
     );
 
-    _logoRotation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: -8.0 * (math.pi / 180), end: 2.0 * (math.pi / 180)).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 2.0 * (math.pi / 180), end: 0.0).chain(CurveTween(curve: Curves.easeInOut)), weight: 50),
-    ]).animate(CurvedAnimation(parent: _mainController, curve: const Interval(0.0, 0.93)));
+    _logoRotation =
+        TweenSequence<double>([
+          TweenSequenceItem(
+            tween: Tween(
+              begin: -8.0 * (math.pi / 180),
+              end: 2.0 * (math.pi / 180),
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 50,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 2.0 * (math.pi / 180),
+              end: 0.0,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
+            weight: 50,
+          ),
+        ]).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.0, 0.93),
+          ),
+        );
 
     // --- ANIMACIONES DEL TEXTO (Inicia a los 1.2s -> 40% de la animación) ---
     _textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _mainController, curve: const Interval(0.4, 0.6, curve: Curves.easeOut))
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.4, 0.6, curve: Curves.easeOut),
+      ),
     );
 
     _textOffset = Tween<double>(begin: 8.0, end: 0.0).animate(
-      CurvedAnimation(parent: _mainController, curve: const Interval(0.4, 0.7, curve: Curves.easeOut))
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.4, 0.7, curve: Curves.easeOut),
+      ),
     );
 
     // Iniciar las animaciones
@@ -103,9 +197,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     try {
       await splashAudioPlayer.setVolume(0.35);
       splashAudioPlayer.audioCache.prefix = '';
-      await splashAudioPlayer.play(AssetSource('lib/resources/audio/Pibbles.mp3'));
+      await splashAudioPlayer.play(
+        AssetSource('lib/resources/audio/Pibbles.mp3'),
+      );
     } catch (e) {
-      debugPrint("El autoplay está bloqueado o el audio no se encontró, splash silencioso.");
+      debugPrint(
+        "El autoplay está bloqueado o el audio no se encontró, splash silencioso.",
+      );
     }
   }
 
@@ -207,11 +305,19 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(32),
                               boxShadow: const [
-                                BoxShadow(color: Color(0xA6675CFF), blurRadius: 30),
-                                BoxShadow(color: Color(0x59FF5C8A), blurRadius: 60),
+                                BoxShadow(
+                                  color: Color(0xA6675CFF),
+                                  blurRadius: 30,
+                                ),
+                                BoxShadow(
+                                  color: Color(0x59FF5C8A),
+                                  blurRadius: 60,
+                                ),
                               ],
                               image: const DecorationImage(
-                                image: AssetImage('lib/resources/images/pibble_logo.png'), 
+                                image: AssetImage(
+                                  'lib/resources/images/logo.png',
+                                ),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -222,8 +328,9 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   },
                 ),
 
-                const SizedBox(height: 40), // 👈 Espacio garantizado entre el Logo y el Texto
-
+                const SizedBox(
+                  height: 40,
+                ), //  Espacio garantizado entre el Logo y el Texto
                 // 3. TEXTO "PIBBLE MOVIES"
                 AnimatedBuilder(
                   animation: _mainController,
@@ -246,13 +353,16 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   },
                 ),
 
-                const SizedBox(height: 40), // 👈 Espacio garantizado entre el Texto y la Barra de carga
-
+                const SizedBox(
+                  height: 40,
+                ), // Espacio garantizado entre el Texto y la Barra de carga
                 // 4. BARRA DE CARGA SUTIL
                 AnimatedBuilder(
                   animation: _mainController,
                   builder: (context, child) {
-                    final double barOpacity = _mainController.value > 0.5 ? 1.0 : 0.0;
+                    final double barOpacity = _mainController.value > 0.5
+                        ? 1.0
+                        : 0.0;
                     return AnimatedOpacity(
                       opacity: barOpacity,
                       duration: const Duration(milliseconds: 500),
@@ -268,13 +378,20 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           animation: _loadingController,
                           builder: (context, child) {
                             return Transform.translate(
-                              offset: Offset(-60.0 + (_loadingController.value * 180.0), 0),
+                              offset: Offset(
+                                -60.0 + (_loadingController.value * 180.0),
+                                0,
+                              ),
                               child: Container(
                                 width: 60,
                                 height: 2,
                                 decoration: const BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [Colors.transparent, Color(0xFF675CFF), Colors.transparent],
+                                    colors: [
+                                      Colors.transparent,
+                                      Color(0xFF675CFF),
+                                      Colors.transparent,
+                                    ],
                                   ),
                                 ),
                               ),
