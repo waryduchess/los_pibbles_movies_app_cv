@@ -7,9 +7,13 @@ import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
 //Creamos la configuracion global de router Define como navegamos en pantallas
 final appRouter = GoRouter(
   //esto nos ayuuda a definir una pantalla al iniciar o abrir la App
-  initialLocation: '/login',
+  initialLocation: '/splash',
   //Lista de rutas disponibles en la app
   routes: [
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: '/',
       name: HomeScreen.name,
