@@ -1,5 +1,6 @@
 //vista de pelicuas de incio
 export './movies/home_screen.dart';
+export './auth/biometric_success_screen.dart';
 
 //vista login y registro
 export './auth/login_screen.dart';

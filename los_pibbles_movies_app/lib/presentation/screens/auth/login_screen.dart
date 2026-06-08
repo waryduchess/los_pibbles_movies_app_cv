@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/services/biometric_service.dart';
 import '../../widgets/button_widget.dart';
 import '../../widgets/input_widget.dart';
 import '../../widgets/gradient_background_widget.dart';
@@ -18,6 +19,28 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+//biometrico wey 
+  Future<void> _authenticateAndNavigate() async {
+    final bool success = await BiometricService.authenticate();
+    if (success && mounted) {
+      context.go('/home_screen');
+      return;
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo autenticar con huella. Intenta de nuevo.'),
+        ),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // biomatrico
+  }
 
   @override
   void dispose() {
@@ -31,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.secondary900,
+      backgroundColor: const Color.fromARGB(255, 26, 27, 46),
       body: Stack(
         children: [
           Container(
@@ -137,9 +160,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: theme.dividerColor,
                           ),
                         ),
-                        child: const Icon(
-                          Icons.fingerprint,
-                          size: 32,
+                        child: InkWell(
+                          onTap: _authenticateAndNavigate,
+                          child: const Icon(
+                            Icons.fingerprint,
+                            size: 32,
+                          ),
                         ),
                       ),
 

@@ -10,8 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^17.2.3
-  google_fonts: ^6.2.1 
-  
+  google_fonts: ^6.2.1
+  flutter_native_splash: ^2.2.17
+  local_auth: ^2.2.0
 
 dev_dependencies:
   flutter_test:

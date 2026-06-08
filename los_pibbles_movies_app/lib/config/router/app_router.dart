@@ -31,5 +31,10 @@ final appRouter = GoRouter(
       //esto es el widget de la ruta que se mostrara cuando entremos
       builder: (context, state) => const RegisterScreen(),
     ),
+    GoRoute(
+      path: '/biometric-success',
+      name: BiometricSuccessScreen.name,
+      builder: (context, state) => const BiometricSuccessScreen(),
+    ),
   ],
 );
