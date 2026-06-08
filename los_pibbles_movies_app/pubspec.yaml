@@ -36,3 +36,4 @@ flutter:
 
   assets:
     - lib/resources/images/logo.png
+    - lib/resources/audio/Pibbles.mp3
