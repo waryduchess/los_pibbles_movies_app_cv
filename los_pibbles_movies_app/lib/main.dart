@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/config/router/app_router.dart';
 import 'package:los_pibbles_movies_app/theme/app_theme.dart';
+import 'config/db/db_connection.dart'; // ajusta la ruta si hace falta
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBConnection.initialize(); // lee .env y prepara settings
+
+  // Prueba de conexión rápida
+  try {
+    final conn = await DBConnection.getConnection();
+    final results = await conn.query('SELECT COUNT(*) AS total FROM usuarios;');
+    final total = results.isNotEmpty ? results.first['total'] : 0;
+    print('Query result: $total');
+    await conn.close();
+  } catch (e) {
+    print('Test de conexión falló: $e');
+  }
   runApp(const MainApp());
 }
 
