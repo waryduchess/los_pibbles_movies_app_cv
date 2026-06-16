@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
+import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/biometric_auth_button.dart';
 import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
@@ -21,7 +21,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   bool _isLoading = false;
 
@@ -31,11 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
     _checkSavedSession();
   }
 
-  Future<void> _checkSavedSession() async {
-    final userId = await _storage.read(key: 'userId');
-    if (userId != null) {
-      if (!mounted) return;
-      context.go('/');
+  void _checkSavedSession() {
+    if (SessionManager.isLoggedIn) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go('/');
+      });
     }
   }
 
@@ -52,8 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
 
       if (result['success'] == true) {
-        await _storage.write(key: 'userId', value: result['userId']);
-        await _storage.write(key: 'userName', value: result['userName']);
+        SessionManager.setSession(result['userId'], result['userName']);
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error de conexión: $e'),
+          content: Text('Error de conexion: $e'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -130,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
 
                       InputWidget(
-                        label: 'Correo electrónico *',
+                        label: 'Correo electronico *',
                         hintText: 'isa@email.com',
                         controller: _emailController,
                       ),
@@ -138,8 +136,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
 
                       InputWidget(
-                        label: 'Contraseña *',
-                        hintText: '••••••••',
+                        label: 'Contrasena *',
+                        hintText: '........',
                         controller: _passwordController,
                         obscureText: true,
                       ),
@@ -149,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: ButtonWidget(
-                          text: '¿Olvidaste tu contraseña?',
+                          text: 'Olvidaste tu contrasena?',
                           textColor: AppColors.accent600,
                           type: ButtonType.tertiary,
                           onPressed: () {},
@@ -159,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 12),
 
                       ButtonWidget(
-                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesión',
+                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesion',
                         type: ButtonType.primary,
                         onPressed: _isLoading ? () {} : _handleLogin,
                       ),
