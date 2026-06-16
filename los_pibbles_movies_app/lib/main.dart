@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/config/router/app_router.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/theme/app_theme.dart';
-
-import 'config/db/db_connection.dart';
 import 'package:provider/provider.dart';
-import 'config/db/db_connection.dart'; // ajusta la ruta si hace falta
+import 'config/db/db_connection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,10 +26,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: appRouter,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme().getTheme(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MoviesProvider()..loadMovies()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: appRouter,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme().getTheme(),
+      ),
     );
   }
 }

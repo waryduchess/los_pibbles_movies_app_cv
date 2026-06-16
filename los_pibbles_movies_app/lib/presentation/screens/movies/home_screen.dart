@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SafeArea(child: HomeScreenBody()));
+    return const HomeScreenBody();
   }
 }
 
@@ -177,5 +177,3 @@ class HomeScreenBody extends StatelessWidget {
   }
 }
 
-
-///home/erikg/UPQROO/Movil II/los_pibbles_app_movies/los_pibbles_movies_app_cv/los_pibbles_movies_app/lib/resources/images/logo.png
