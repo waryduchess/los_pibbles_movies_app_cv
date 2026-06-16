@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/main_shell.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -10,8 +11,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/',
-      name: HomeScreen.name,
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const MainShell(),
     ),
     GoRoute(
       path: '/login',
