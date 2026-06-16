@@ -4,11 +4,13 @@ import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip.dart';
 class CategorySelector extends StatelessWidget {
   final List<String> categories;
   final String selectedCategory;
+  final ValueChanged<String> onSelected;
 
   const CategorySelector({
     super.key,
     required this.categories,
     required this.selectedCategory,
+    required this.onSelected,
   });
 
   @override
@@ -22,10 +24,13 @@ class CategorySelector extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
           final selected = category == selectedCategory;
-          return TagChip(
-            label: category,
-            selected: selected,
-            outlined: !selected,
+          return GestureDetector(
+            onTap: () => onSelected(category),
+            child: TagChip(
+              label: category,
+              selected: selected,
+              outlined: !selected,
+            ),
           );
         },
       ),

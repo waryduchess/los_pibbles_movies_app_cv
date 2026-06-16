@@ -3,6 +3,7 @@ import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/category_selector.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/featured_movie_carousel.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
@@ -46,8 +47,10 @@ class HomeScreenBody extends StatelessWidget {
     return _buildContent(
       context,
       provider.trending,
-      provider.popular,
+      provider.filteredPopular,
       provider.categories,
+      provider.selectedCategory,
+      provider.selectCategory,
     );
   }
 
@@ -56,6 +59,8 @@ class HomeScreenBody extends StatelessWidget {
     List<Movie> trending,
     List<Movie> popular,
     List<String> categories,
+    String selectedCategory,
+    ValueChanged<String> onSelectCategory,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -79,7 +84,11 @@ class HomeScreenBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          CategorySelector(categories: categories, selectedCategory: 'Todos'),
+          CategorySelector(
+            categories: categories,
+            selectedCategory: selectedCategory,
+            onSelected: onSelectCategory,
+          ),
           const SizedBox(height: 24),
           const Text(
             'Recomendadas',
@@ -90,12 +99,14 @@ class HomeScreenBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...popular.map(
+          ...popular.take(10).map(
             (movie) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: MovieCardItem(movie: movie),
             ),
           ),
+          const SizedBox(height: 24),
+          const CommentSection(),
         ],
       ),
     );

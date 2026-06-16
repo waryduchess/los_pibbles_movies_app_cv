@@ -8,8 +8,19 @@ class MoviesProvider extends ChangeNotifier {
   List<Movie> trending = [];
   List<Movie> popular = [];
   List<String> categories = [];
+  String selectedCategory = 'Todos';
   bool isLoading = true;
   String? errorMessage;
+
+  List<Movie> get filteredPopular {
+    if (selectedCategory == 'Todos') return popular;
+    return popular.where((m) => m.genres.contains(selectedCategory)).toList();
+  }
+
+  void selectCategory(String category) {
+    selectedCategory = category;
+    notifyListeners();
+  }
 
   Future<void> loadMovies() async {
     isLoading = true;
