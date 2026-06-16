@@ -6,3 +6,8 @@ export './auth/login_screen.dart';
 export './auth/register_screen.dart';
 
 export 'splash/splash_screen.dart';
+
+//vistas de navegacion
+export 'search/search_screen.dart';
+export 'favorites/favorites_screen.dart';
+export 'settings/settings_screen.dart';
