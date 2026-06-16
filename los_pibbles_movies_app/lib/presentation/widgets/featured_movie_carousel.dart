@@ -27,7 +27,7 @@ class _FeaturedMovieCarouselState extends State<FeaturedMovieCarousel> {
     return Column(
       children: [
         SizedBox(
-          height: 240,
+          height: 320,
           child: PageView.builder(
             controller: pageController,
             itemCount: widget.movies.length,

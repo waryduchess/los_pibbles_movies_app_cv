@@ -45,7 +45,7 @@ class HomeScreenBody extends StatelessWidget {
 
     return _buildContent(
       context,
-      provider.nowPlaying,
+      provider.trending,
       provider.popular,
       provider.categories,
     );
@@ -53,7 +53,7 @@ class HomeScreenBody extends StatelessWidget {
 
   Widget _buildContent(
     BuildContext context,
-    List<Movie> nowPlaying,
+    List<Movie> trending,
     List<Movie> popular,
     List<String> categories,
   ) {
@@ -68,7 +68,7 @@ class HomeScreenBody extends StatelessWidget {
           const SizedBox(height: 24),
           _buildSectionTitle(context),
           const SizedBox(height: 18),
-          FeaturedMovieCarousel(movies: nowPlaying), // ¡Ahora con datos reales!
+          FeaturedMovieCarousel(movies: trending.take(6).toList()),
           const SizedBox(height: 24),
           const Text(
             'Géneros',
@@ -158,7 +158,7 @@ class HomeScreenBody extends StatelessWidget {
           ),
         ),
         Text(
-          'DESTACADAS',
+          'TENDENCIAS',
           style: TextStyle(
             color: AppColors.white,
             fontSize: 13,

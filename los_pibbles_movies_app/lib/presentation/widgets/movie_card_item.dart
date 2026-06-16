@@ -95,16 +95,18 @@ class MovieCardItem extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    ...movie.genres
-                        .take(2)
-                        .map(
-                          (genre) => Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: TagChip(label: genre, outlined: true),
-                          ),
-                        ),
                   ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: movie.genres
+                      .take(3)
+                      .map(
+                        (genre) => TagChip(label: genre, outlined: true),
+                      )
+                      .toList(),
                 ),
               ],
             ),

@@ -26,6 +26,16 @@ class MoviesRepository {
         .toList();
   }
 
+  Future<List<Movie>> getTrendingMovies() async {
+    final data = await _client.get('trending/movie/week',
+        queryParams: {'page': '1'});
+    final genreMap = await getGenres();
+    return (data['results'] as List)
+        .map((json) => MovieDto.fromJson(json))
+        .map((dto) => Movie.fromDto(dto, genreMap))
+        .toList();
+  }
+
   Future<List<Movie>> getPopularMovies() async {
     final data = await _client.get('movie/popular', queryParams: {'page': '1'});
     final genreMap = await getGenres();

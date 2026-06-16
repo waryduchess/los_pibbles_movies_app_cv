@@ -26,7 +26,6 @@ class SearchBarWidget extends StatelessWidget {
               ),
             ),
           ),
-          const Icon(Icons.mic, color: AppColors.white, size: 20),
         ],
       ),
     );
