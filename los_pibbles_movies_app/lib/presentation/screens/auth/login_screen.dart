@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/biometric_auth_button.dart';
 import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
@@ -19,6 +21,59 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSavedSession();
+  }
+
+  Future<void> _checkSavedSession() async {
+    final userId = await _storage.read(key: 'userId');
+    if (userId != null) {
+      if (!mounted) return;
+      context.go('/');
+    }
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await AuthService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        await _storage.write(key: 'userId', value: result['userId']);
+        await _storage.write(key: 'userName', value: result['userName']);
+        context.go('/');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['error']),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -60,7 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
 
-                      // H1 — Título principal
                       const AppH1(
                         text: 'Pibble Movies',
                         textAlign: TextAlign.center,
@@ -68,7 +122,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 8),
 
-                      // BodySm — Subtítulo
                       const AppBodySm(
                         text: 'Descubre y resume el cine',
                         textAlign: TextAlign.center,
@@ -106,9 +159,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 12),
 
                       ButtonWidget(
-                        text: 'Iniciar Sesión',
+                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesión',
                         type: ButtonType.primary,
-                        onPressed: () {},
+                        onPressed: _isLoading ? () {} : _handleLogin,
                       ),
 
                       const SizedBox(height: 12),
