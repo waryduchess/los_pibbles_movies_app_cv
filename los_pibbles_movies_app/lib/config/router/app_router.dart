@@ -1,6 +1,7 @@
 //Importamos goRouter para manejar la navegacion de la App.
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/main_shell.dart';
 
 //Al usar goRouter nos ayuda mucho a que nosostros no tengamos que hacer config
 //especial mentel si lo queremos usar en la web
@@ -16,8 +17,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/',
-      name: HomeScreen.name,
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const MainShell(),
     ),
     GoRoute(
       //esto es la URL de la ruta
