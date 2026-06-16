@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/back_button_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/checkbox_widget.dart';
@@ -18,7 +19,85 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _nombresController = TextEditingController();
+  final TextEditingController _apellidosController = TextEditingController();
+  final TextEditingController _correoController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   bool _termsAccepted = false;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _nombresController.dispose();
+    _apellidosController.dispose();
+    _correoController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleRegister() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Las contraseñas no coinciden'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    if (!_termsAccepted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Debes aceptar los términos y condiciones'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await AuthService.register(
+        _nombresController.text.trim(),
+        _apellidosController.text.trim(),
+        _correoController.text.trim(),
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cuenta creada exitosamente. Inicia sesión.'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        context.go('/login');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['error']),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +108,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 0,
         leading: const BackButtonWidget(route: '/login'),
 
-        // H2 — Header de pantalla
         title: const AppH2(
           text: 'Crear Cuenta',
           textAlign: TextAlign.center,
@@ -53,28 +131,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       InputWidget(
                         label: 'Nombre(s) *',
                         hintText: 'Juan Manuel',
-                        controller: TextEditingController(),
+                        controller: _nombresController,
                       ),
                       const SizedBox(height: 16),
 
                       InputWidget(
                         label: 'Apellido(s) *',
                         hintText: 'Pérez Rivas',
-                        controller: TextEditingController(),
+                        controller: _apellidosController,
                       ),
                       const SizedBox(height: 16),
 
                       InputWidget(
                         label: 'Correo electrónico *',
                         hintText: 'isa@email.com',
-                        controller: TextEditingController(),
+                        controller: _correoController,
                       ),
                       const SizedBox(height: 16),
 
                       InputWidget(
                         label: 'Contraseña *',
                         hintText: '••••••••',
-                        controller: TextEditingController(),
+                        controller: _passwordController,
                         obscureText: true,
                       ),
                       const SizedBox(height: 16),
@@ -82,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       InputWidget(
                         label: 'Confirmar contraseña *',
                         hintText: '••••••••',
-                        controller: TextEditingController(),
+                        controller: _confirmPasswordController,
                         obscureText: true,
                       ),
                       const SizedBox(height: 20),
@@ -96,16 +174,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 24),
 
                       ButtonWidget(
-                        text: 'Registrarse',
+                        text: _isLoading ? 'Cargando...' : 'Registrarse',
                         type: ButtonType.primary,
-                        onPressed: () => context.go('/login'),
+                        onPressed: _isLoading ? () {} : _handleRegister,
                       ),
                       const SizedBox(height: 16),
 
                       ButtonWidget(
                         text: '¿Ya tienes cuenta? Inicia sesión',
                         type: ButtonType.tertiary,
-                        onPressed: () => context.go('/login'),
+                        onPressed: _isLoading ? () {} : () => context.go('/login'),
                         textColor: AppColors.accent600,
                       ),
                       const SizedBox(height: 32),

@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:go_router/go_router.dart';
 
-//  Referencia global para que el audio sobreviva a la navegación
 final AudioPlayer splashAudioPlayer = AudioPlayer();
 
 class SplashScreen extends StatefulWidget {
@@ -18,24 +17,19 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  // Controladores de animación
   late AnimationController _mainController;
   late AnimationController _loadingController;
 
-  // Animaciones Resplandor
   late Animation<double> _glowOpacity;
   late Animation<double> _glowScale;
 
-  // Animaciones Logo
   late Animation<double> _logoScale;
   late Animation<double> _logoOpacity;
   late Animation<double> _logoRotation;
 
-  // Animaciones Texto
   late Animation<double> _textOpacity;
   late Animation<double> _textOffset;
 
-  // Estado de la pantalla
   bool _isFadingOut = false;
 
   @override
@@ -47,19 +41,16 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _setupAnimations() {
-    // Controlador principal (Dura 3 segundos exactos)
     _mainController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
     );
 
-    // Controlador para la barra de carga infinita (1.6s)
     _loadingController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1600),
     )..repeat();
 
-    // --- ANIMACIONES DEL RESPLANDOR (Termina a los 2.4s -> 80% de la animación) ---
     _glowOpacity =
         TweenSequence<double>([
           TweenSequenceItem(
@@ -106,7 +97,6 @@ class _SplashScreenState extends State<SplashScreen>
           ),
         );
 
-    // --- ANIMACIONES DEL LOGO (Termina a los 2.8s -> 93% de la animación) ---
     _logoScale =
         TweenSequence<double>([
           TweenSequenceItem(
@@ -174,7 +164,6 @@ class _SplashScreenState extends State<SplashScreen>
           ),
         );
 
-    // --- ANIMACIONES DEL TEXTO (Inicia a los 1.2s -> 40% de la animación) ---
     _textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _mainController,
@@ -189,7 +178,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Iniciar las animaciones
     _mainController.forward();
   }
 
@@ -247,14 +235,13 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0E17), // Classic Dark Background
+      backgroundColor: const Color(0xFF0D0E17),
       body: AnimatedOpacity(
         opacity: _isFadingOut ? 0.0 : 1.0,
         duration: const Duration(milliseconds: 700),
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // 1. RESPLANDOR DE FONDO CON BLUR (Queda por detrás en el Stack)
             AnimatedBuilder(
               animation: _mainController,
               builder: (context, child) {
@@ -285,11 +272,9 @@ class _SplashScreenState extends State<SplashScreen>
               },
             ),
 
-            // 🌟 NUEVA ESTRUCTURA: Usamos un Column centrado para evitar que los elementos se encimen
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 2. LOGO ANIMADO CON SOMBRAS
                 AnimatedBuilder(
                   animation: _mainController,
                   builder: (context, child) {
@@ -328,10 +313,7 @@ class _SplashScreenState extends State<SplashScreen>
                   },
                 ),
 
-                const SizedBox(
-                  height: 40,
-                ), //  Espacio garantizado entre el Logo y el Texto
-                // 3. TEXTO "PIBBLE MOVIES"
+                const SizedBox(height: 40),
                 AnimatedBuilder(
                   animation: _mainController,
                   builder: (context, child) {
@@ -353,10 +335,7 @@ class _SplashScreenState extends State<SplashScreen>
                   },
                 ),
 
-                const SizedBox(
-                  height: 40,
-                ), // Espacio garantizado entre el Texto y la Barra de carga
-                // 4. BARRA DE CARGA SUTIL
+                const SizedBox(height: 40),
                 AnimatedBuilder(
                   animation: _mainController,
                   builder: (context, child) {
