@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:los_pibbles_movies_app/presentation/models/movie_model.dart';
+import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
+import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/category_selector.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/featured_movie_carousel.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = 'home--screen';
@@ -22,6 +24,39 @@ class HomeScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<MoviesProvider>();
+
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            provider.errorMessage!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: AppColors.white),
+          ),
+        ),
+      );
+    }
+
+    return _buildContent(
+      context,
+      provider.nowPlaying,
+      provider.popular,
+      provider.categories,
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    List<Movie> nowPlaying,
+    List<Movie> popular,
+    List<String> categories,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
@@ -33,7 +68,7 @@ class HomeScreenBody extends StatelessWidget {
           const SizedBox(height: 24),
           _buildSectionTitle(context),
           const SizedBox(height: 18),
-          FeaturedMovieCarousel(movies: featuredMovies),
+          FeaturedMovieCarousel(movies: nowPlaying), // ¡Ahora con datos reales!
           const SizedBox(height: 24),
           const Text(
             'Géneros',
@@ -55,7 +90,7 @@ class HomeScreenBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...movieList.map(
+          ...popular.map(
             (movie) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: MovieCardItem(movie: movie),
@@ -65,6 +100,8 @@ class HomeScreenBody extends StatelessWidget {
       ),
     );
   }
+
+  // Los métodos _buildHeader y _buildSectionTitle se mantienen igual que antes
 
   Widget _buildHeader(BuildContext context) {
     return Row(
@@ -132,78 +169,3 @@ class HomeScreenBody extends StatelessWidget {
     );
   }
 }
-
-const categories = ['Todos', 'Drama', 'Misterio', 'Musical'];
-
-const featuredMovies = [
-  Movie(
-    title: 'La Sombra del Norte',
-    subtitle: 'Thriller / Crimen',
-    year: '2022',
-    duration: '2h 04min',
-    rating: '7.8',
-    genres: ['Thriller', 'Crimen'],
-    isFavorite: true,
-    description:
-        'Una historia oscura de secretos perdidos en las calles del norte.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80',
-    featuredTags: ['Thriller', 'Crimen'],
-  ),
-  Movie(
-    title: 'Entre Sombras',
-    subtitle: 'Suspenso / Misterio',
-    year: '2024',
-    duration: '1h 58min',
-    rating: '8.3',
-    genres: ['Suspenso', 'Misterio'],
-    isFavorite: false,
-    description:
-        'Un detective debe descifrar una red de pistas antes de que sea tarde.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=900&q=80',
-    featuredTags: ['Misterio', 'Drama'],
-  ),
-];
-
-const movieList = [
-  Movie(
-    title: 'El Último Acto',
-    subtitle: 'Carmen Rojas',
-    year: '2023',
-    duration: '1h 45min',
-    rating: '9.1',
-    genres: ['Drama'],
-    isFavorite: true,
-    description:
-        'Una actriz de teatro enfrenta su última función mientras lidia con un oscuro pasado.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=700&q=80',
-  ),
-  Movie(
-    title: 'Ecos del Pasado',
-    subtitle: 'Ramón Delgado',
-    year: '2023',
-    duration: '2h 01min',
-    rating: '8.4',
-    genres: ['Drama', 'Misterio'],
-    isFavorite: false,
-    description:
-        'Un periodista investiga un misterio que conecta su pasado con una vieja desaparición.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80',
-  ),
-  Movie(
-    title: 'Espejo Roto',
-    subtitle: 'Lucía Díaz',
-    year: '2024',
-    duration: '1h 50min',
-    rating: '8.7',
-    genres: ['Suspenso', 'Thriller'],
-    isFavorite: false,
-    description:
-        'Una joven descubre un reflejo que no pertenece a su realidad y debe escapar.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80',
-  ),
-];

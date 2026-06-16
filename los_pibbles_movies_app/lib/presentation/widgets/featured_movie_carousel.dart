@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:los_pibbles_movies_app/presentation/models/movie_model.dart';
+import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/featured_movie_card.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
