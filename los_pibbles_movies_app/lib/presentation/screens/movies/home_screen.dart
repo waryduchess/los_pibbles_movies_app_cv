@@ -107,24 +107,20 @@ class HomeScreenBody extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
+        Row(
+          children: [
+            Image.asset(
+              'lib/resources/images/logo.png',
+              width: 32,
+              height: 32,
+            ),
+            const SizedBox(width: 10),
+            const Text(
               'Pibble Movies',
               style: TextStyle(
                 color: AppColors.white,
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Encuentra tu próxima película favorita',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -169,3 +165,6 @@ class HomeScreenBody extends StatelessWidget {
     );
   }
 }
+
+
+///home/erikg/UPQROO/Movil II/los_pibbles_app_movies/los_pibbles_movies_app_cv/los_pibbles_movies_app/lib/resources/images/logo.png

@@ -82,13 +82,24 @@ class FeaturedMovieCard extends StatelessWidget {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary500,
+                          foregroundColor: AppColors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                           elevation: 0,
                         ),
                         onPressed: () {},
-                        child: const Text('Ver resumen'),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.play_arrow, color: AppColors.white, size: 18),
+                            SizedBox(width: 4),
+                            Text(
+                              'Ver resumen',
+                              style: TextStyle(color: AppColors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
