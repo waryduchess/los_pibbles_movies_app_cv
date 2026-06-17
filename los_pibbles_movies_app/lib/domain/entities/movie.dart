@@ -12,6 +12,7 @@ class Movie {
   final bool isFavorite;
   final List<String> genres;
   final List<String> featuredTags;
+  final DateTime? releaseDate;
 
   String get description => overview;
 
@@ -26,6 +27,7 @@ class Movie {
     required this.subtitle,
     this.isFavorite = false,
     this.genres = const [],
+    this.releaseDate,
     this.featuredTags = const [],
   });
 
