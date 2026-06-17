@@ -150,7 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           text: 'Olvidaste tu contrasena?',
                           textColor: AppColors.accent600,
                           type: ButtonType.tertiary,
-                          onPressed: () {},
+                          onPressed: () {
+                            context.go('/recover');
+                          },
                         ),
                       ),
 

@@ -10,6 +10,7 @@ import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/new_password
 import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/success_step.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  static const name = 'recover--screen';
   const ForgotPasswordScreen({super.key});
 
   @override
@@ -19,7 +20,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
+
   // 🚀 Instancia de tu Datasource enfocado en MySQL
   final AuthBackendDatasource _authDatasource = AuthBackendDatasource();
 
@@ -57,18 +58,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _nextPage() {
     FocusScope.of(context).unfocus();
-    _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
     setState(() => _currentPage++);
   }
 
   void _prevPage() {
     if (_currentPage == 0) {
       context.pop();
-    } else if (_currentPage == 2) { 
-      context.go('/login'); 
+    } else if (_currentPage == 2) {
+      context.go('/login');
     } else {
       FocusScope.of(context).unfocus();
-      _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
       setState(() => _currentPage--);
     }
   }
@@ -77,23 +84,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _checkEmail() async {
     final isValid = _emailFormKey.currentState?.validate() ?? false;
     if (!isValid) return;
-    
-    setState(() { _isLoadingEmail = true; _emailErrorMessage = null; });
-    
+
+    setState(() {
+      _isLoadingEmail = true;
+      _emailErrorMessage = null;
+    });
+
     try {
       final email = _emailController.text.trim();
       // 🚀 Consulta directa a MySQL a través de tu datasource híbrido
       final exists = await _authDatasource.checkEmailExists(email);
-      
+
       if (exists) {
         _nextPage();
       } else {
-        setState(() => _emailErrorMessage = 'Este correo no está registrado en el sistema.');
+        setState(
+          () => _emailErrorMessage =
+              'Este correo no está registrado en el sistema.',
+        );
       }
     } catch (e) {
-      setState(() => _emailErrorMessage = e.toString().replaceAll('Exception: ', ''));
+      setState(
+        () => _emailErrorMessage = e.toString().replaceAll('Exception: ', ''),
+      );
     } finally {
-      setState(() { _isLoadingEmail = false; });
+      setState(() {
+        _isLoadingEmail = false;
+      });
     }
   }
 
@@ -101,24 +118,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _resetPassword() async {
     final isValid = _passwordFormKey.currentState?.validate() ?? false;
     if (!isValid) return;
-    
+
     setState(() => _isResetting = true);
 
     try {
       final email = _emailController.text.trim();
       final newPassword = _passwordController.text.trim();
-      
+
       // 🚀 Ejecutamos el cambio aplicando el tratamiento hash definido en tu .env
       await _authDatasource.forceUpdatePassword(email, newPassword);
-      
-      _nextPage(); 
+
+      _nextPage();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceAll('Exception: ', '')),
             backgroundColor: const Color(0xFF1E1F35),
-          )
+          ),
         );
       }
     } finally {
@@ -128,13 +145,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _evaluatePassword(String value) {
     if (value.length < 8) {
-      setState(() { _passwordStrengthText = "Débil"; _passwordStrengthValue = 0.25; _passwordStrengthColor = Colors.red; });
+      setState(() {
+        _passwordStrengthText = "Débil";
+        _passwordStrengthValue = 0.25;
+        _passwordStrengthColor = Colors.red;
+      });
     } else if (!value.contains(RegExp(r'[0-9]'))) {
-      setState(() { _passwordStrengthText = "Aceptable"; _passwordStrengthValue = 0.50; _passwordStrengthColor = Colors.orange; });
+      setState(() {
+        _passwordStrengthText = "Aceptable";
+        _passwordStrengthValue = 0.50;
+        _passwordStrengthColor = Colors.orange;
+      });
     } else if (!value.contains(RegExp(r'[A-Z]'))) {
-      setState(() { _passwordStrengthText = "Buena"; _passwordStrengthValue = 0.75; _passwordStrengthColor = Colors.lightGreen; });
+      setState(() {
+        _passwordStrengthText = "Buena";
+        _passwordStrengthValue = 0.75;
+        _passwordStrengthColor = Colors.lightGreen;
+      });
     } else {
-      setState(() { _passwordStrengthText = "Excelente"; _passwordStrengthValue = 1.0; _passwordStrengthColor = Colors.green; });
+      setState(() {
+        _passwordStrengthText = "Excelente";
+        _passwordStrengthValue = 1.0;
+        _passwordStrengthColor = Colors.green;
+      });
     }
   }
 
@@ -148,8 +181,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       backgroundColor: scaffoldBgColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: _prevPage),
-        title: const Text('Recuperar contraseña', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: _prevPage,
+        ),
+        title: const Text(
+          'Recuperar contraseña',
+          style: TextStyle(color: Colors.white),
+        ),
         elevation: 0,
       ),
       body: SafeArea(
@@ -173,7 +212,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     isLoading: _isLoadingEmail,
                     onSubmit: _checkEmail,
                   ),
-                  
+
                   // PASO 2: Ingresar Nueva Contraseña
                   NewPasswordStep(
                     formKey: _passwordFormKey,
@@ -185,7 +224,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     isLoading: _isResetting,
                     onSubmit: _resetPassword,
                   ),
-                  
+
                   // PASO 3: Éxito
                   SuccessStep(onGoToLogin: () => context.go('/login')),
                 ],
