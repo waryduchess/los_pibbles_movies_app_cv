@@ -157,21 +157,14 @@ class HomeScreenBody extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: const [
         Text(
-          'Rating',
+          'Tendencias',
           style: TextStyle(
-            color: AppColors.primary500,
+            color: AppColors.white,
             fontSize: 15,
             fontWeight: FontWeight.w700,
           ),
         ),
-        Text(
-          'TENDENCIAS',
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        
       ],
     );
   }
