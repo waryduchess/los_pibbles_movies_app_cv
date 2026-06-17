@@ -23,5 +23,10 @@ final appRouter = GoRouter(
       name: RegisterScreen.name,
       builder: (context, state) => const RegisterScreen(),
     ),
+    // 🚀 AGREGAMOS LA RUTA DE RECUPERACIÓN AQUÍ
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
   ],
 );

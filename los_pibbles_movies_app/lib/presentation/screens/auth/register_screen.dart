@@ -37,24 +37,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // Función de ayuda para mostrar los SnackBar de error
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+      ),
+    );
+  }
+
   Future<void> _handleRegister() async {
-    if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Las contraseñas no coinciden'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+    final nombres = _nombresController.text.trim();
+    final apellidos = _apellidosController.text.trim();
+    final correo = _correoController.text.trim();
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    // 1. Validar que no haya campos vacíos
+    if (nombres.isEmpty || apellidos.isEmpty || correo.isEmpty || password.isEmpty) {
+      _showErrorSnackBar('Por favor, completa todos los campos requeridos');
       return;
     }
 
+    // 2. 🚀 VALIDACIÓN DE SOLO LETRAS (Acepta espacios, acentos y ñ)
+    final nameRegExp = RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$');
+    if (!nameRegExp.hasMatch(nombres)) {
+      _showErrorSnackBar('El nombre solo debe contener letras');
+      return;
+    }
+    if (!nameRegExp.hasMatch(apellidos)) {
+      _showErrorSnackBar('El apellido solo debe contener letras');
+      return;
+    }
+
+    // 3. 🚀 VALIDACIÓN DE CORREO ELECTRÓNICO
+    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegExp.hasMatch(correo)) {
+      _showErrorSnackBar('Ingresa un correo electrónico válido');
+      return;
+    }
+
+    // 4. Validar contraseñas
+    if (password != confirmPassword) {
+      _showErrorSnackBar('Las contraseñas no coinciden');
+      return;
+    }
+
+    // 5. Validar términos y condiciones
     if (!_termsAccepted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Debes aceptar los términos y condiciones'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      _showErrorSnackBar('Debes aceptar los términos y condiciones');
       return;
     }
 
@@ -62,10 +94,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final result = await AuthService.register(
-        _nombresController.text.trim(),
-        _apellidosController.text.trim(),
-        _correoController.text.trim(),
-        _passwordController.text,
+        nombres,
+        apellidos,
+        correo,
+        password,
       );
 
       if (!mounted) return;
@@ -80,22 +112,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         context.go('/login');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result['error']),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        _showErrorSnackBar(result['error']);
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error de conexión: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      _showErrorSnackBar('Error de conexión: $e');
     }
   }
 
@@ -107,7 +129,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: AppColors.secondary900,
         elevation: 0,
         leading: const BackButtonWidget(route: '/login'),
-
         title: const AppH2(
           text: 'Crear Cuenta',
           textAlign: TextAlign.center,
