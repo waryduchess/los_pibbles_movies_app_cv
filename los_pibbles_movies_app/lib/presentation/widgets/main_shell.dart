@@ -28,20 +28,26 @@ class _MainShellState extends State<MainShell> {
       body: SafeArea(
         child: IndexedStack(index: _currentIndex, children: _screens),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        backgroundColor: AppColors.secondary900,
-        selectedItemColor: AppColors.primary500,
-        unselectedItemColor: AppColors.white.withOpacity(0.5),
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Búsqueda'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favoritos'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes'),
-        ],
-      ),
+      bottomNavigationBar: Theme(
+  data: Theme.of(context).copyWith(
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+  ),
+  child: BottomNavigationBar(
+    currentIndex: _currentIndex,
+    onTap: (i) => setState(() => _currentIndex = i),
+    backgroundColor: AppColors.secondary900,
+    selectedItemColor: AppColors.primary500,
+    unselectedItemColor: AppColors.white.withOpacity(0.5),
+    type: BottomNavigationBarType.fixed,
+    items: const [
+      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+      BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Búsqueda'),
+      BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favoritos'),
+      BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes'),
+    ],
+  ),
+),
     );
   }
 }

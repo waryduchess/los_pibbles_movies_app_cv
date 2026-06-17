@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip2.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 class MovieCardItem extends StatelessWidget {
@@ -103,9 +103,7 @@ class MovieCardItem extends StatelessWidget {
                   runSpacing: 4,
                   children: movie.genres
                       .take(3)
-                      .map(
-                        (genre) => TagChip(label: genre, outlined: true),
-                      )
+                      .map((genre) => TagChip(label: genre))
                       .toList(),
                 ),
               ],
