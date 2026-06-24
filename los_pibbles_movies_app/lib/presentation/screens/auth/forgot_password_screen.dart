@@ -5,9 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/datasources/auth_backend_datasource.dart';
 
 // Tus widgets globales de pasos de UI
-import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/email_step.dart';
-import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/new_password_step.dart';
-import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/success_step.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
+
 
 class ForgotPasswordScreen extends StatefulWidget {
   static const name = 'forgot-password--screen';
