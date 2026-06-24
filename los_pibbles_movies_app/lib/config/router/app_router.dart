@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:los_pibbles_movies_app/presentation/screens/auth/forgot_password_screen.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/main_shell.dart';
 
@@ -22,6 +21,10 @@ final appRouter = GoRouter(
       path: '/recover',
       name: ForgotPasswordScreen.name,
       builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+   GoRoute(
+      path: '/terms',
+      builder: (context, state) => const TermsScreen(),
     ),
   ],
 );

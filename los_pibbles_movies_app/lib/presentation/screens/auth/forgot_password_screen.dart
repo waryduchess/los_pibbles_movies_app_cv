@@ -10,6 +10,7 @@ import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/new_password
 import 'package:los_pibbles_movies_app/widgets/auth/forgot_password/success_step.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  static const name = 'forgot-password--screen';
   const ForgotPasswordScreen({super.key});
 
   @override
