@@ -3,11 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
-import 'package:los_pibbles_movies_app/widgets/biometric_auth_button.dart';
-import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/input_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/text_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class LoginScreen extends StatefulWidget {
   static const name = 'login--screen';
@@ -23,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = false;
+  bool _isGoogleLoading = false; // Estado para el botón de Google
 
   @override
   void initState() {
@@ -38,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  /// Maneja el inicio de sesión estándar con correo y contraseña
   Future<void> _handleLogin() async {
     setState(() => _isLoading = true);
 
@@ -73,6 +71,47 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  /// Maneja el inicio de sesión con Google (Actualizado para V7)
+  Future<void> _handleGoogleLogin() async {
+    setState(() => _isGoogleLoading = true);
+
+    try {
+      // 📌 Llamamos al nuevo método V7 que maneja authenticate()
+      final result = await AuthService.loginWithGoogle();
+
+      if (!mounted) return;
+      setState(() => _isGoogleLoading = false);
+
+      if (result['success'] == true) {
+        // 📌 Usamos la estructura de datos que definimos en Turn 5: result['data']
+        final userData = result['data'] as Map<String, dynamic>;
+        
+        SessionManager.setSession(
+          userData['userId'] ?? 'google_id_fallback', 
+          userData['userName'] ?? 'Usuario de Google'
+        );
+        context.go('/');
+      } else {
+        // Si el usuario cancela o hay un error controlado
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['error']), 
+            backgroundColor: AppColors.error
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isGoogleLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error crítico de conexión: $e'), 
+          backgroundColor: AppColors.error
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -82,6 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Definimos si alguno de los botones está cargando para deshabilitar ambos
+    final isAnyLoading = _isLoading || _isGoogleLoading;
+
     return Scaffold(
       backgroundColor: AppColors.secondary900,
       body: Stack(
@@ -90,7 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: const BoxDecoration(color: AppColors.secondary900),
           ),
           const GradientBackgroundWidget(),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -158,10 +199,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 12),
 
+                      // Botón de Iniciar Sesión (Estándar)
                       ButtonWidget(
                         text: _isLoading ? 'Cargando...' : 'Iniciar Sesion',
                         type: ButtonType.primary,
-                        onPressed: _isLoading ? () {} : _handleLogin,
+                        // Deshabilitamos si alguno de los dos está cargando
+                        onPressed: isAnyLoading ? () {} : _handleLogin,
                       ),
 
                       const SizedBox(height: 12),
@@ -174,8 +217,57 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
 
+                      const SizedBox(height: 24),
+
+                      // Separador visual "o continúa con"
+                      Row(
+                        children: [
+                          Expanded(child: Divider(color: Colors.white.withOpacity(0.15), thickness: 1)),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'o continúa con',
+                              style: TextStyle(color: Colors.white60, fontSize: 13),
+                            ),
+                          ),
+                          Expanded(child: Divider(color: Colors.white.withOpacity(0.15), thickness: 1)),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // 📌 Botón de Google (CORREGIDO COMPLETO)
+                      ElevatedButton.icon(
+                        onPressed: isAnyLoading ? null : _handleGoogleLogin,
+                        icon: _isGoogleLoading
+                            ? const SizedBox(
+                                width: 20, height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            // 💡 SOLUCIÓN VISUAL: Usar la versión PNG del mismo logo de Wikimedia para evitar errores
+                            : Image.network(
+                                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/120px-Google_%22G%22_logo.svg.png',
+                                height: 24,
+                              ), 
+                        label: Text(
+                          _isGoogleLoading ? 'Cargando...' : 'Continuar con Google',
+                          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF13151D), // Un tono muy oscuro para tu diseño
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                          side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(height: 32),
 
+                      // BiometricAuthButton se mantiene igual
                       BiometricAuthButton(
                         onAuthenticated: () => context.go('/'),
                       ),

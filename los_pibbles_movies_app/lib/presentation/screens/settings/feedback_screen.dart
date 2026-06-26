@@ -3,8 +3,7 @@ import 'package:flutter/physics.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../theme/app_colors.dart';
-import '../../../widgets/inputs/cr_radio_card.dart';
-import '../../../widgets/common/cr_button.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});

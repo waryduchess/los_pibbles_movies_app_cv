@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
-import 'package:los_pibbles_movies_app/widgets/back_button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/input_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/text_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class RegisterScreen extends StatefulWidget {

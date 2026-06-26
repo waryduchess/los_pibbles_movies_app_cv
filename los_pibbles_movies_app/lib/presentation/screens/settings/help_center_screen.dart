@@ -3,10 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../theme/app_colors.dart';
-import '../../../widgets/inputs/cr_search_field.dart';
-import '../../../widgets/movies/cr_category_chip.dart';
-import '../../../widgets/settings/cr_faq_item.dart';
-import '../../../widgets/common/cr_section_header.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class Faq {
   final String category;
