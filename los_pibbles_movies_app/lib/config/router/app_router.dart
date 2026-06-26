@@ -26,5 +26,9 @@ final appRouter = GoRouter(
       path: '/terms',
       builder: (context, state) => const TermsScreen(),
     ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
   ],
 );

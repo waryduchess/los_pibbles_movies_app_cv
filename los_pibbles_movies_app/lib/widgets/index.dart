@@ -37,3 +37,12 @@ export 'settings/cr_faq_item.dart';
 
 // Navigation Widgets - Componentes de navegación
 export 'navigation/bottom_tab_bar.dart';
+
+export 'back_button_widget.dart';
+export 'biometric_auth_button.dart';
+export 'button_widget.dart';
+export 'card_container_widget.dart';
+export 'checkbox_widget.dart';
+export 'gradient_background_widget.dart';
+export 'input_widget.dart';
+export 'text_widget.dart';
