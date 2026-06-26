@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
 
                       InputWidget(
-                        label: 'Correo electrónico *',
+                        label: 'Correo electronico *',
                         hintText: 'isa@email.com',
                         controller: _emailController,
                       ),
@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
 
                       InputWidget(
-                        label: 'Contraseña *',
+                        label: 'Contrasena *',
                         hintText: '........',
                         controller: _passwordController,
                         obscureText: true,
@@ -147,11 +147,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: ButtonWidget(
-                          text: 'Olvidaste tu contraseña?',
+                          text: 'Olvidaste tu contrasena?',
                           textColor: AppColors.accent600,
                           type: ButtonType.tertiary,
                           onPressed: () {
-                            context.go('/recover');
+                            context.push('/forgot-password');
                           },
                         ),
                       ),
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 12),
 
                       ButtonWidget(
-                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesión',
+                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesion',
                         type: ButtonType.primary,
                         onPressed: _isLoading ? () {} : _handleLogin,
                       ),

@@ -16,6 +16,8 @@ export 'cards/cr_movie_card.dart';
 export 'cards/movie_review_card.dart';
 export 'cards/movie_actor_card.dart';
 export 'cards/cr_message_card.dart';
+export 'cards/validation_card_widget.dart';
+
 
 // Movie Widgets - Componentes específicos de películas
 export 'movies/movie_reviews_section.dart';
