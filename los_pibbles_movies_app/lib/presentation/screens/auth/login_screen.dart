@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
+import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/biometric_auth_button.dart';
+import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/input_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/button_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/text_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   static const name = 'login--screen';
@@ -14,6 +22,57 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSavedSession();
+  }
+
+  void _checkSavedSession() {
+    if (SessionManager.isLoggedIn) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go('/');
+      });
+    }
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await AuthService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        SessionManager.setSession(result['userId'], result['userName']);
+        context.go('/');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['error']),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexion: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -23,148 +82,108 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
+      backgroundColor: AppColors.secondary900,
       body: Stack(
         children: [
-          Container(decoration: const BoxDecoration(color: Color(0xFF1A1B2E))),
-          Positioned(
-            right: 0,
-            top: 0,
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: MediaQuery.of(context).size.height * 0.6,
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(0.6, 0.4),
-                  radius: 1.063,
-                  colors: [
-                    Color.fromRGBO(255, 92, 138, 0.07),
-                    Colors.transparent,
-                  ],
-                  stops: [0, 0.5],
-                ),
-              ),
-            ),
+          Container(
+            decoration: const BoxDecoration(color: AppColors.secondary900),
           ),
-          Positioned(
-            left: 0,
-            top: 0,
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: MediaQuery.of(context).size.height * 0.55,
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(-0.6, -0.4),
-                  radius: 1.063,
-                  colors: [
-                    Color.fromRGBO(103, 92, 255, 0.094),
-                    Colors.transparent,
-                  ],
-                  stops: [0, 0.55],
-                ),
-              ),
-            ),
-          ),
+          const GradientBackgroundWidget(),
+
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 16),
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 420),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const SizedBox(height: 24),
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.dividerColor),
-                          ),
-                          child: const Icon(Icons.movie, size: 36),
+              child: Center(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 40),
+
+                      Center(
+                        child: Image.asset(
+                          'lib/resources/images/logo.png',
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'Pibble Movies',
-                          style: theme.textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Descubre y resume el cine',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 32),
-                        Text(
-                          'Correo electrónico *',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            hintText: 'tu@ejemplo.com',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Text('Contraseña *', style: theme.textTheme.bodyMedium),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: '••••••••',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('¿Olvidaste tu contraseña?'),
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            child: Text('Iniciar Sesión'),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        OutlinedButton(
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      const AppH1(
+                        text: 'Pibble Movies',
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      const AppBodySm(
+                        text: 'Descubre y resume el cine',
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      InputWidget(
+                        label: 'Correo electronico *',
+                        hintText: 'isa@email.com',
+                        controller: _emailController,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      InputWidget(
+                        label: 'Contrasena *',
+                        hintText: '........',
+                        controller: _passwordController,
+                        obscureText: true,
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ButtonWidget(
+                          text: 'Olvidaste tu contrasena?',
+                          textColor: AppColors.accent600,
+                          type: ButtonType.tertiary,
                           onPressed: () {
-                            context.go("/register");
+                            context.push('/forgot-password');
                           },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            child: Text('Registrarse'),
-                          ),
                         ),
-                        const SizedBox(height: 32),
-                        Container(
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.dividerColor),
-                          ),
-                          child: const Icon(Icons.fingerprint, size: 32),
-                        ),
-                        const SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('Probar sin cuenta →'),
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      ButtonWidget(
+                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesion',
+                        type: ButtonType.primary,
+                        onPressed: _isLoading ? () {} : _handleLogin,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      ButtonWidget(
+                        text: 'Registrarse',
+                        type: ButtonType.secondary,
+                        onPressed: () {
+                          context.go('/register');
+                        },
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      BiometricAuthButton(
+                        onAuthenticated: () => context.go('/'),
+                      ),
+
+                      const SizedBox(height: 12),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

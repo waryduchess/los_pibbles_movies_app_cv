@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+// Asegúrate de que esta ruta coincida con la ubicación real en tu proyecto
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
-//creamos una clase paraa agrupar las configuraciones de nuestro tema.
 class AppTheme {
-  //ThemeData es una clase que representa todas configuraciones visual de nuestra app
-  //getTheme es una metodo que devuelve un objeto llamado themeData, pata utilizar en nuestra app
   ThemeData getTheme() => ThemeData(
-    //useMaterial3 es una prpiedad que nos permite activar el material design 3
     useMaterial3: true,
-    colorScheme: ColorScheme(
+    
+    // Configuración completa del esquema de colores usando las variables del equipo
+    colorScheme: const ColorScheme(
       brightness: Brightness.dark,
-      primary: AppColors.primary500,
+      primary: AppColors.primary500,       // Su morado principal (0xFF9475FF)
       onPrimary: AppColors.white,
-      secondary: AppColors.secondary500,
+      secondary: AppColors.secondary500,   // Su tono secundario intermedio
       onSecondary: AppColors.white,
-      surface: AppColors.black,
+      surface: AppColors.secondary1000,    // El fondo oscuro profundo (0xFF0D0E17)
       onSurface: AppColors.white,
-      error: AppColors.error,
+      error: AppColors.error,              // Su rojo de error (0xFFFF3B30)
       onError: AppColors.white,
-      tertiary: AppColors.accent500,
+      tertiary: AppColors.accent500,       // Su acento rosa (0xFFFF5C8A)
       onTertiary: AppColors.white,
     ),
-    scaffoldBackgroundColor: AppColors.black,
-    cardColor: AppColors.secondary900,
+    
+    // Fondos e interfaces globales alineadas a sus escalas
+    scaffoldBackgroundColor: AppColors.secondary1000, // Fondo base de la app
+    cardColor: AppColors.secondary900,               // Fondo para tarjetas y contenedores (0xFF1A1B2E)
   );
 }
