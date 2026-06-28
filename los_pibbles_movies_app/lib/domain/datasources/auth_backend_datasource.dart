@@ -49,6 +49,21 @@ class AuthBackendDatasource {
   }
   // ... Dentro de tu clase AuthBackendDatasource ...
 
+  /// Actualiza la foto de perfil del usuario en MySQL
+  Future<void> updateProfilePhoto(int userId, String photoUrl) async {
+    final conn = await DBConnection.getConnection();
+    try {
+      await conn.execute(
+        'UPDATE usuarios SET foto_perfil = :foto WHERE id_usuario = :id_usuario',
+        {'foto': photoUrl, 'id_usuario': userId},
+      );
+    } catch (e) {
+      throw Exception('No se pudo actualizar la foto de perfil: $e');
+    } finally {
+      await conn.close();
+    }
+  }
+
   /// Obtiene los comentarios locales de una película desde MySQL
   Future<List<Map<String, dynamic>>> getLocalMovieReviews(int movieId) async {
     final conn = await DBConnection.getConnection();

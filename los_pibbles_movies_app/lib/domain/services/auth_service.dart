@@ -30,7 +30,7 @@ class AuthService {
     final conn = await DBConnection.getConnection();
     try {
       final results = await conn.execute(
-        'SELECT id_usuario, nombres, password FROM usuarios WHERE correo = :correo',
+        'SELECT id_usuario, nombres, apellidos, foto_perfil, password FROM usuarios WHERE correo = :correo',
         {'correo': correo},
       );
 
@@ -50,6 +50,7 @@ class AuthService {
         'success': true,
         'userId': user['id_usuario']!,
         'userName': user['nombres']!,
+        'fotoPerfil': user['foto_perfil'],
       };
     } finally {
       await conn.close();
@@ -116,7 +117,7 @@ class AuthService {
       try {
         // 3. Verificar si el usuario ya existe en tu base de datos
         final results = await conn.execute(
-          'SELECT id_usuario, nombres FROM usuarios WHERE correo = :correo',
+          'SELECT id_usuario, nombres, foto_perfil FROM usuarios WHERE correo = :correo',
           {'correo': email},
         );
 
@@ -128,6 +129,7 @@ class AuthService {
             'data': {
               'userId': user['id_usuario']!,
               'userName': user['nombres']!,
+              'fotoPerfil': user['foto_perfil'],
             }
           };
         } else {
@@ -147,7 +149,7 @@ class AuthService {
 
           // Obtenemos el ID que se le acaba de asignar
           final newUserResults = await conn.execute(
-            'SELECT id_usuario FROM usuarios WHERE correo = :correo',
+            'SELECT id_usuario, foto_perfil FROM usuarios WHERE correo = :correo',
             {'correo': email},
           );
           
@@ -158,6 +160,7 @@ class AuthService {
             'data': {
               'userId': newUser['id_usuario']!,
               'userName': nombres,
+              'fotoPerfil': newUser['foto_perfil'],
             }
           };
         }
