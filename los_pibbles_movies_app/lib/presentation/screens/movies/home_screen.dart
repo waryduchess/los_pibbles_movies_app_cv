@@ -5,7 +5,7 @@ import 'package:los_pibbles_movies_app/presentation/widgets/category_selector.da
 import 'package:los_pibbles_movies_app/presentation/widgets/featured_movie_carousel.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
+//import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -68,9 +68,8 @@ class HomeScreenBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context),
-          const SizedBox(height: 24),
-          const SearchBarWidget(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
+          //const SearchBarWidget(),
           _buildSectionTitle(context),
           const SizedBox(height: 18),
           FeaturedMovieCarousel(movies: trending.take(6).toList()),
@@ -105,7 +104,7 @@ class HomeScreenBody extends StatelessWidget {
               child: MovieCardItem(movie: movie),
             ),
           ),
-          const SizedBox(height: 24),
+          //const SizedBox(height: 24),
           const CommentSection(),
         ],
       ),
@@ -136,18 +135,7 @@ class HomeScreenBody extends StatelessWidget {
             ),
           ],
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.secondary800,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          padding: const EdgeInsets.all(10),
-          child: const Icon(
-            Icons.person_outline,
-            color: AppColors.white,
-            size: 24,
-          ),
-        ),
+       
       ],
     );
   }

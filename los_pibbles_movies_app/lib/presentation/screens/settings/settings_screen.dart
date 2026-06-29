@@ -6,6 +6,11 @@ import 'package:los_pibbles_movies_app/domain/datasources/auth_backend_datasourc
 import 'package:los_pibbles_movies_app/domain/services/cloudinary_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/settings/biometric_card_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/settings/menu_card_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/settings/profile_card_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/settings/section_label_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/logout_button_widget.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const name = 'settings--screen';
@@ -20,6 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final ImagePicker _picker = ImagePicker();
   final AuthBackendDatasource _datasource = AuthBackendDatasource();
   bool _isUploading = false;
+  bool _biometricEnabled = false;
 
   String? get _fotoPerfil => SessionManager.fotoPerfil;
   String? get _userName => SessionManager.userName;
@@ -95,118 +101,110 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: AppColors.secondary1000,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              _buildProfileSection(),
-              const SizedBox(height: 40),
-              _buildLogoutButton(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileSection() {
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
+        child: Column(
           children: [
-            GestureDetector(
-              onTap: _viewPhotoFullScreen,
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primary500, width: 3),
-                ),
-                child: _isUploading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary500,
-                        ),
-                      )
-                    : _fotoPerfil != null && _fotoPerfil!.isNotEmpty
-                        ? ClipOval(
-                            child: Image.network(
-                              _fotoPerfil!,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
-                                  _buildDefaultAvatar(),
-                            ),
-                          )
-                        : _buildDefaultAvatar(),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: _isUploading ? null : _pickAndUploadPhoto,
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary500,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.secondary1000, width: 2),
-                  ),
-                  child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+            _buildTopBar(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                child: Column(
+                  children: [
+                    ProfileCardWidget(
+                      userName: _userName ?? 'Isabel Zacarias',
+                      email: 'isabel@gmail.com',
+                      memberSince: 'Miembro desde mar. 2024',
+                      favoritesCount: '0',
+                      isUploading: _isUploading,
+                      fotoPerfil: _fotoPerfil,
+                      onPhotoTap: _viewPhotoFullScreen,
+                      onCameraTap: _pickAndUploadPhoto,
+                    ),
+                    const SizedBox(height: 24),
+                    const SectionLabelWidget(text: 'CUENTA'),
+                    const SizedBox(height: 8),
+                    MenuCardWidget(items: [
+                      MenuItemData(
+                        icon: Icons.mail_outline,
+                        iconColor: AppColors.primary500,
+                        title: 'Correo electrónico',
+                        subtitle: null,
+                        onTap: () {},
+                      ),
+                      MenuItemData(
+                        icon: Icons.lock_outline,
+                        iconColor: Colors.greenAccent,
+                        title: 'Cambiar contraseña',
+                        onTap: () {},
+                      ),
+                      MenuItemData(
+                        icon: Icons.edit_outlined,
+                        iconColor: AppColors.primary500,
+                        title: 'Cambiar nombre y apellido',
+                        onTap: () {},
+                      ),
+                    ]),
+                    const SizedBox(height: 20),
+                    const SectionLabelWidget(text: 'SEGURIDAD'),
+                    const SizedBox(height: 8),
+                    BiometricCardWidget(
+                      enabled: _biometricEnabled,
+                      onChanged: (value) {
+                        setState(() => _biometricEnabled = value);
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    const SectionLabelWidget(text: 'SOPORTE'),
+                    const SizedBox(height: 8),
+                    MenuCardWidget(items: [
+                      MenuItemData(
+                        icon: Icons.chat_bubble_outline,
+                        iconColor: AppColors.error,
+                        title: 'Enviar comentarios',
+                        onTap: () {},
+                      ),
+                      MenuItemData(
+                        icon: Icons.description_outlined,
+                        iconColor: Colors.grey,
+                        title: 'Términos y privacidad',
+                        onTap: () {},
+                      ),
+                    ]),
+                    const SizedBox(height: 28),
+                    LogoutButtonWidget(onPressed: _logout),
+                  ],
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        Text(
-          _userName ?? 'Usuario',
-          style: const TextStyle(
-            color: AppColors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDefaultAvatar() {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: const BoxDecoration(
-        color: AppColors.secondary800,
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(Icons.person, color: AppColors.white, size: 52),
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: _logout,
-        icon: const Icon(Icons.logout, color: Colors.white),
-        label: const Text(
-          'Cerrar sesion',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.error,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
       ),
     );
   }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          
+          const SizedBox(height: 8),
+          const Row(
+            children: [
+              SizedBox(width: 8),
+              Text(
+                'Perfil',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 }
