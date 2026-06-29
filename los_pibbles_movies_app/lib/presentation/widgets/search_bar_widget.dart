@@ -25,7 +25,7 @@ class SearchBarWidget extends StatelessWidget {
               onChanged: onChanged,
               style: const TextStyle(color: AppColors.white),
               decoration: InputDecoration(
-                hintText: 'Buscar título, actor...',
+                hintText: 'Buscar título...',
                 hintStyle: TextStyle(color: AppColors.white.withOpacity(0.65)),
                 border: InputBorder.none,
               ),
