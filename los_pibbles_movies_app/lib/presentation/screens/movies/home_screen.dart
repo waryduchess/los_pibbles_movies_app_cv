@@ -63,7 +63,7 @@ class HomeScreenBody extends StatelessWidget {
     ValueChanged<String> onSelectCategory,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
