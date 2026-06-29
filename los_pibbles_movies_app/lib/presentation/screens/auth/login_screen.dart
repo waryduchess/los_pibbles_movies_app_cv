@@ -51,7 +51,11 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
 
       if (result['success'] == true) {
-        SessionManager.setSession(result['userId'], result['userName']);
+        SessionManager.setSession(
+          result['userId'],
+          result['userName'],
+          foto: result['fotoPerfil'],
+        );
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
