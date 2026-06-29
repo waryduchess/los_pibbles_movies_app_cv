@@ -2,8 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:los_pibbles_movies_app/domain/datasources/auth_backend_datasource.dart';
-import 'package:los_pibbles_movies_app/domain/services/cloudinary_service.dart';
+import 'package:los_pibbles_movies_app/domain/services/profile_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/settings/biometric_card_widget.dart';
@@ -23,7 +22,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final ImagePicker _picker = ImagePicker();
-  final AuthBackendDatasource _datasource = AuthBackendDatasource();
   bool _isUploading = false;
   bool _biometricEnabled = false;
 
@@ -70,12 +68,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     try {
       final imageFile = File(picked.path);
-      final url = await CloudinaryService.uploadImage(imageFile);
-
       final userId = int.parse(SessionManager.userId!);
-      await _datasource.updateProfilePhoto(userId, url);
-
-      SessionManager.fotoPerfil = url;
+      await ProfileService.updatePhoto(userId, imageFile);
       setState(() {});
     } catch (e) {
       if (mounted) {
@@ -92,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _logout() async {
-    SessionManager.clear();
+    await ProfileService.logout();
     if (mounted) context.go('/login');
   }
 
