@@ -32,8 +32,13 @@ export 'auth/forgot_password/new_password_step.dart';
 export 'auth/forgot_password/success_step.dart';
 
 // Settings Widgets - Componentes de configuración
-export 'settings/cr_settings_row.dart';
+export 'settings/biometric_card_widget.dart';
 export 'settings/cr_faq_item.dart';
+export 'settings/cr_settings_row.dart';
+export 'settings/menu_card_widget.dart';
+export 'settings/profile_card_widget.dart';
+export 'settings/profile_photo_widget.dart';
+export 'settings/section_label_widget.dart';
 
 // Navigation Widgets - Componentes de navegación
 export 'navigation/bottom_tab_bar.dart';
@@ -45,4 +50,5 @@ export 'card_container_widget.dart';
 export 'checkbox_widget.dart';
 export 'gradient_background_widget.dart';
 export 'input_widget.dart';
+export 'logout_button_widget.dart';
 export 'text_widget.dart';
