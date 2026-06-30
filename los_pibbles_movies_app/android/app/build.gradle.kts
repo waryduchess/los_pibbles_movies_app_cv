@@ -37,6 +37,25 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+     signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
 }
 
 flutter {
