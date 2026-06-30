@@ -98,7 +98,7 @@ class _TermsScreenState extends State<TermsScreen> {
 
   Widget _buildSummaryCard(String text) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),//sirve
       decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +138,7 @@ class _TermsScreenState extends State<TermsScreen> {
           },
         ),
         const SizedBox(height: 32),
-        Text('© 2026 CineResumen · Hecho con cariño en México', style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12)),
+        Text('© 2026 Pibble Movies', style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12)),
         const SizedBox(height: 40),
       ],
     );
@@ -151,14 +151,14 @@ class _TermsScreenState extends State<TermsScreen> {
       children: [
         _buildHeaderCard('Términos de uso', Icons.description, AppColors.accent),
         const SizedBox(height: 16),
-        _buildSummaryCard("Usa CineResumen para uso personal. No copies ni revendas el contenido. Si rompes las reglas, podemos suspender tu cuenta. El servicio se ofrece sin garantías y se rige por leyes mexicanas."),
-        const SizedBox(height: 24),
-        _buildSection('Aceptación de los términos', 'Al acceder o usar la aplicación CineResumen, aceptas estar sujeto a estos términos. Si no estás de acuerdo con alguna parte, no podrás acceder al servicio.'),
+        _buildSummaryCard("Usa Pibble Movies para uso personal. No copies ni revendas el contenido. Si rompes las reglas, podemos suspender tu cuenta. El servicio se ofrece sin garantías y se rige por leyes mexicanas."),
+        const SizedBox(height: 0),
+        _buildSection('Aceptación de los términos', 'Al acceder o usar la aplicación Pibble Movies, aceptas estar sujeto a estos términos. Si no estás de acuerdo con alguna parte, no podrás acceder al servicio.'),
         _buildSection('Uso permitido', 'La aplicación está destinada únicamente para uso personal y no comercial. Se prohíbe la extracción automatizada de datos, reventa de cuentas o distribución de nuestros resúmenes sin autorización.'),
         _buildSection('Cuentas y seguridad', 'Eres responsable de salvaguardar la contraseña o los accesos biométricos que utilizas para acceder a la aplicación. Notifícanos inmediatamente sobre cualquier brecha de seguridad.'),
-        _buildSection('Contenido de terceros', 'Nuestra aplicación puede contener enlaces a sitios web o servicios de terceros (como bases de datos de películas) que no son propiedad ni están controlados por CineResumen.'),
+        _buildSection('Contenido de terceros', 'Nuestra aplicación puede contener enlaces a sitios web o servicios de terceros (como bases de datos de películas) que no son propiedad ni están controlados por Pibble Movies.'),
         _buildSection('Suspensión de cuentas', 'Podemos cancelar o suspender el acceso a nuestro servicio inmediatamente, sin previo aviso o responsabilidad, por cualquier motivo, incluido el incumplimiento de los Términos.'),
-        _buildSection('Limitación de responsabilidad', 'CineResumen y sus proveedores no serán responsables de ningún daño indirecto, incidental o consecuente resultante del uso o la incapacidad de usar el servicio.'),
+        _buildSection('Limitación de responsabilidad', 'Pibble Movies y sus proveedores no serán responsables de ningún daño indirecto, incidental o consecuente resultante del uso o la incapacidad de usar el servicio.'),
         _buildSection('Ley aplicable', 'Estos términos se regirán e interpretarán de acuerdo con las leyes de México, sin tener en cuenta sus disposiciones sobre conflictos de leyes.'),
         _buildFooterContent(),
       ],
@@ -173,13 +173,13 @@ class _TermsScreenState extends State<TermsScreen> {
         _buildHeaderCard('Política de privacidad', Icons.security, AppColors.primary),
         const SizedBox(height: 16),
         _buildSummaryCard("Solo guardamos lo necesario para que la app funcione: correo, contraseña cifrada, favoritos y reseñas. Nunca vendemos tus datos. Puedes borrar todo desde Ajustes en cualquier momento."),
-        const SizedBox(height: 24),
-        _buildSection('Qué datos recopilamos', 'Recopilamos la dirección de correo electrónico que proporcionas al registrarte, así como datos de uso anónimos. Las contraseñas y datos biométricos se almacenan cifrados.'),
-        _buildSection('Cómo los usamos', 'Usamos tu información exclusivamente para proveer y mantener nuestro servicio, notificarte sobre cambios en la app y proporcionar soporte al cliente.'),
+        const SizedBox(height: 0),
+        _buildSection('¿Qué datos recopilamos?', 'Recopilamos la dirección de correo electrónico que proporcionas al registrarte, así como datos de uso anónimos. Las contraseñas y datos biométricos se almacenan cifrados.'),
+        _buildSection('¿Cómo los usamos?', 'Usamos tu información exclusivamente para proveer y mantener nuestro servicio, notificarte sobre cambios en la app y proporcionar soporte al cliente.'),
         _buildSection('Almacenamiento', 'Tus datos están protegidos en servidores seguros. Retenemos tu información solo durante el tiempo necesario para los fines establecidos en esta política.'),
         _buildSection('Tus derechos', 'Tienes derecho a acceder, actualizar o eliminar la información que tenemos sobre ti. Puedes realizar la eliminación completa de tu cuenta desde el menú de Ajustes.'),
         _buildSection('Cookies y analítica', 'Utilizamos tecnologías de seguimiento locales mínimas para mejorar la experiencia de navegación en la app. No compartimos identificadores con anunciantes de terceros.'),
-        _buildSection('Contacto', 'Si tienes preguntas sobre esta Política de Privacidad, puedes contactarnos a través del Centro de Ayuda o escribiendo directamente a privacidad@cineresumen.app.'),
+        _buildSection('Contacto', 'Si tienes preguntas sobre esta Política de Privacidad, puedes contactarnos a través del Centro de Ayuda '),
         _buildFooterContent(),
       ],
     );

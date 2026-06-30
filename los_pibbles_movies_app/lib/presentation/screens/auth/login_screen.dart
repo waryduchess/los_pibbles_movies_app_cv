@@ -49,7 +49,11 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
 
       if (result['success'] == true) {
-        SessionManager.setSession(result['userId'], result['userName']);
+        SessionManager.setSession(
+          result['userId'],
+          result['userName'],
+          foto: result['fotoPerfil'],
+        );
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
 
                       InputWidget(
-                        label: 'Correo electronico *',
+                        label: 'Correo electrónico *',
                         hintText: 'isa@email.com',
                         controller: _emailController,
                       ),
@@ -177,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
 
                       InputWidget(
-                        label: 'Contrasena *',
+                        label: 'Contraseña *',
                         hintText: '........',
                         controller: _passwordController,
                         obscureText: true,
@@ -188,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: ButtonWidget(
-                          text: 'Olvidaste tu contrasena?',
+                          text: 'Olvidaste tu contraseña?',
                           textColor: AppColors.accent600,
                           type: ButtonType.tertiary,
                           onPressed: () {
@@ -201,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Botón de Iniciar Sesión (Estándar)
                       ButtonWidget(
-                        text: _isLoading ? 'Cargando...' : 'Iniciar Sesion',
+                        text: _isLoading ? 'Cargando...' : 'Iniciar sesión',
                         type: ButtonType.primary,
                         // Deshabilitamos si alguno de los dos está cargando
                         onPressed: isAnyLoading ? () {} : _handleLogin,

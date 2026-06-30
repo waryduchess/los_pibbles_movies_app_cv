@@ -44,7 +44,7 @@ class _MainShellState extends State<MainShell> {
       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
       BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Búsqueda'),
       BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favoritos'),
-      BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes'),
+      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
     ],
   ),
 ),
