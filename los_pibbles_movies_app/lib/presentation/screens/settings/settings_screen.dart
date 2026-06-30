@@ -10,6 +10,7 @@ import 'package:los_pibbles_movies_app/widgets/settings/menu_card_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/settings/profile_card_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/settings/section_label_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/logout_button_widget.dart';
+import 'package:los_pibbles_movies_app/widgets/dialogs/show_logout_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const name = 'settings--screen';
@@ -164,7 +165,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ]),
                     const SizedBox(height: 28),
-                    LogoutButtonWidget(onPressed: _logout),
+
+                    LogoutButtonWidget(
+                      onPressed: () {
+                       showLogoutDialog(
+                       context: context,
+                       onConfirm: _logout,
+                      );
+                    },
+                        ),
                   ],
                 ),
               ),
