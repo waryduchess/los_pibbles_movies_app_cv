@@ -6,7 +6,7 @@ class DBConnection {
     await dotenv.load(fileName: envFile);
   }
 
-  static String get _host => dotenv.env['DB_HOST'] ?? 'localhost';
+  static String get _host => dotenv.env['DB_HOST'] ?? '10.0.2.2';
   static int get _port => int.tryParse(dotenv.env['DB_PORT'] ?? '3306') ?? 3306;
   static String get _user => dotenv.env['DB_USER'] ?? 'root';
   static String get _password => dotenv.env['DB_PASSWORD'] ?? '';

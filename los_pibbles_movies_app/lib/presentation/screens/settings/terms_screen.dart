@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_colors.dart';
-import '../../../widgets/common/cr_button.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class TermsScreen extends StatefulWidget {
   const TermsScreen({super.key});
