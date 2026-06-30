@@ -79,7 +79,7 @@ class BottomTabBar extends StatelessWidget {
               _TabItem(
                 icon: Icons.settings_outlined,
                 activeIcon: Icons.settings_rounded,
-                label: 'Ajustes',
+                label: 'Perfil',
                 isActive: currentIndex == 3,
                 onTap: () => onTap(3),
               ),

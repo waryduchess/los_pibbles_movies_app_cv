@@ -24,6 +24,8 @@ dependencies:
   dart_dotenv: ^1.0.1
   flutter_native_splash: ^2.4.8
   crypto: ^3.0.3
+  google_sign_in: ^7.2.0
+  image_picker: ^1.2.2
   
 
 dev_dependencies:

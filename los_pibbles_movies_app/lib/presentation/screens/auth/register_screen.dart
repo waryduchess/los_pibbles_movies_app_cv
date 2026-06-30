@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
-import 'package:los_pibbles_movies_app/widgets/back_button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/gradient_background_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/input_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/text_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -133,6 +128,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 📌 LÓGICA DE OCULTAMIENTO:
+    // Solo se muestran si el usuario está escribiendo Y además falta cumplir al menos una regla.
+    final bool showNombresValidation = _isTypingNombres && !(_nombresNoNumbers && _nombresTitleCase);
+    final bool showApellidosValidation = _isTypingApellidos && !(_apellidosNoNumbers && _apellidosTitleCase);
+    final bool showCorreoValidation = _isTypingCorreo && !_correoValid;
+    final bool showPasswordValidation = _isTypingPassword && !(_hasLetter && _hasUppercase && _hasNumber && _hasMinLength && _hasNoSpaces && _passwordsMatch);
+
     return Scaffold(
       backgroundColor: AppColors.secondary900,
       appBar: AppBar(
@@ -155,21 +157,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       InputWidget(label: 'Nombre(s) *', hintText: 'Ej: Juan Manuel', controller: _nombresController),
-                      if (_isTypingNombres) ValidationCardWidget(
+                      // 📌 Aplicamos la nueva condición
+                      if (showNombresValidation) ValidationCardWidget(
                         title: "Requisitos del nombre:",
                         requirements: {"No debe contener números": _nombresNoNumbers, "Primera letra mayúscula, resto minúsculas": _nombresTitleCase},
                       ),
                       const SizedBox(height: 16),
 
                       InputWidget(label: 'Apellido(s) *', hintText: 'Ej: Pérez Rivas', controller: _apellidosController),
-                      if (_isTypingApellidos) ValidationCardWidget(
+                      // 📌 Aplicamos la nueva condición
+                      if (showApellidosValidation) ValidationCardWidget(
                         title: "Requisitos de los apellidos:",
                         requirements: {"No debe contener números": _apellidosNoNumbers, "Primera letra mayúscula, resto minúsculas": _apellidosTitleCase},
                       ),
                       const SizedBox(height: 16),
 
                       InputWidget(label: 'Correo electrónico *', hintText: 'isa@email.com', controller: _correoController),
-                      if (_isTypingCorreo) ValidationCardWidget(
+                      // 📌 Aplicamos la nueva condición
+                      if (showCorreoValidation) ValidationCardWidget(
                         title: "Requisitos del correo:",
                         requirements: {"Formato de correo válido (@ y dominio)": _correoValid},
                       ),
@@ -179,7 +184,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 16),
                       InputWidget(label: 'Confirmar contraseña *', hintText: '••••••••', controller: _confirmPasswordController, obscureText: true),
                       
-                      if (_isTypingPassword) ValidationCardWidget(
+                      // 📌 Aplicamos la nueva condición
+                      if (showPasswordValidation) ValidationCardWidget(
                         title: "La contraseña debe cumplir:",
                         requirements: {
                           "Al menos una letra": _hasLetter,
@@ -193,10 +199,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // 📌 NUEVO TEXTO DE TÉRMINOS Y CONDICIONES CLIQUEABLE
                       GestureDetector(
                         onTap: () {
-                          // Asegúrate de tener configurada la ruta '/terminos' en tu router
                           context.push('/terms'); 
                         },
                         child: Padding(
@@ -210,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 TextSpan(
                                   text: 'Términos y Condiciones',
                                   style: TextStyle(
-                                    color: AppColors.accent600, // Usa el color de acento de tu app
+                                    color: AppColors.accent600, 
                                     fontWeight: FontWeight.bold,
                                     decoration: TextDecoration.underline,
                                   ),

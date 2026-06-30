@@ -1,18 +1,22 @@
-import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // 📌 Importación requerida
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // 📌 No olvides importar dotenv
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
 
 class AuthService {
-  // 📌 Configuración de Google Sign-In (ACTUALIZADO V7)
-  // 1. Usamos el patrón de instancia única
+  // 📌 Configuración de Google Sign-In (V7 CORRECTA)
   static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   static bool _isGoogleInitialized = false;
 
-  // 2. Método interno para asegurar la inicialización obligatoria
+  // 📌 AQUÍ ESTÁ LA SOLUCIÓN: Pasarle el Client ID al inicializar
   static Future<void> _initGoogle() async {
     if (!_isGoogleInitialized) {
-      await _googleSignIn.initialize();
+      await _googleSignIn.initialize(
+        // 👇 Esto soluciona la pantalla roja de Android que decía: 
+        // "serverClientId must be provided on Android"
+        serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
+      );
       _isGoogleInitialized = true;
     }
   }
@@ -23,6 +27,7 @@ class AuthService {
     return digest.toString();
   }
 
+  // 📌 INICIO DE SESIÓN TRADICIONAL
   static Future<Map<String, dynamic>> login(
     String correo,
     String password,
@@ -30,7 +35,7 @@ class AuthService {
     final conn = await DBConnection.getConnection();
     try {
       final results = await conn.execute(
-        'SELECT id_usuario, nombres, password FROM usuarios WHERE correo = :correo',
+        'SELECT id_usuario, nombres, apellidos, foto_perfil, password FROM usuarios WHERE correo = :correo',
         {'correo': correo},
       );
 
@@ -50,12 +55,14 @@ class AuthService {
         'success': true,
         'userId': user['id_usuario']!,
         'userName': user['nombres']!,
+        'fotoPerfil': user['foto_perfil'],
       };
     } finally {
       await conn.close();
     }
   }
 
+  // 📌 REGISTRO DE USUARIO TRADICIONAL
   static Future<Map<String, dynamic>> register(
     String nombres,
     String apellidos,
@@ -91,13 +98,13 @@ class AuthService {
     }
   }
 
-  // 📌 Método para inicio de sesión y registro con Google (ACTUALIZADO V7)
+  // 📌 INICIO DE SESIÓN Y REGISTRO CON GOOGLE (V7)
   static Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
-      // 1. Ejecutar la inicialización obligatoria de la V7
+      // 1. Ejecutar la inicialización obligatoria
       await _initGoogle();
 
-      // 2. Mostrar la ventana de Google usando el nuevo método 'authenticate()'
+      // 2. Método 'authenticate()' correcto para la V7
       final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
 
       if (googleUser == null) {
@@ -107,32 +114,28 @@ class AuthService {
       final email = googleUser.email;
       final fullName = googleUser.displayName ?? 'Usuario';
       
-      // Separamos el nombre completo de Google en nombres y apellidos para tu BD
       final nameParts = fullName.split(' ');
       final nombres = nameParts.isNotEmpty ? nameParts.first : 'Usuario';
       final apellidos = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
       final conn = await DBConnection.getConnection();
       try {
-        // 3. Verificar si el usuario ya existe en tu base de datos
         final results = await conn.execute(
-          'SELECT id_usuario, nombres FROM usuarios WHERE correo = :correo',
+          'SELECT id_usuario, nombres, foto_perfil FROM usuarios WHERE correo = :correo',
           {'correo': email},
         );
 
         if (results.rows.isNotEmpty) {
-          // Si ya existe, simplemente lo logueamos
           final user = results.rows.first.assoc();
           return {
             'success': true,
             'data': {
               'userId': user['id_usuario']!,
               'userName': user['nombres']!,
+              'fotoPerfil': user['foto_perfil'],
             }
           };
         } else {
-          // 4. Si no existe, lo registramos usando los datos de Google
-          // Generamos un hash con su ID de Google como contraseña temporal segura
           final placeholderPassword = _hashPassword('GOOGLE_${googleUser.id}');
 
           await conn.execute(
@@ -145,9 +148,8 @@ class AuthService {
             },
           );
 
-          // Obtenemos el ID que se le acaba de asignar
           final newUserResults = await conn.execute(
-            'SELECT id_usuario FROM usuarios WHERE correo = :correo',
+            'SELECT id_usuario, foto_perfil FROM usuarios WHERE correo = :correo',
             {'correo': email},
           );
           
@@ -158,6 +160,7 @@ class AuthService {
             'data': {
               'userId': newUser['id_usuario']!,
               'userName': nombres,
+              'fotoPerfil': newUser['foto_perfil'],
             }
           };
         }
@@ -169,10 +172,10 @@ class AuthService {
     }
   }
 
-  // 📌 Método opcional por si necesitas cerrar la sesión de Google
+  // 📌 CERRAR SESIÓN DE GOOGLE
   static Future<void> logoutGoogle() async {
     try {
-      await _initGoogle(); // Inicializamos por si llaman a cerrar sesión antes de abrirla
+      await _initGoogle(); 
       await _googleSignIn.signOut();
     } catch (e) {
       print('Error cerrando sesión de Google: $e');

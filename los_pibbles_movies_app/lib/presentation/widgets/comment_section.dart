@@ -46,6 +46,7 @@ const List<Comment> sampleComments = [
     rating: 5,
     text: 'Perfecta para decidir qué ver el fin de semana.',
   ),
+  
 ];
 
 class CommentSection extends StatelessWidget {
