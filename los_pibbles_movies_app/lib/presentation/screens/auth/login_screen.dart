@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 38),
 
                       Center(
                         child: Image.asset(
@@ -170,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         textAlign: TextAlign.center,
                       ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 24),
 
                       InputWidget(
                         label: 'Correo electrónico *',
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _emailController,
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
 
                       InputWidget(
                         label: 'Contraseña *',
@@ -187,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: true,
                       ),
 
-                      const SizedBox(height: 10),
+                      //const SizedBox(height: 5),
 
                       Align(
                         alignment: Alignment.centerRight,
@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Botón de Iniciar Sesión (Estándar)
                       ButtonWidget(
@@ -221,24 +221,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 10),
 
                       // Separador visual "o continúa con"
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: Colors.white.withOpacity(0.15), thickness: 1)),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'o continúa con',
-                              style: TextStyle(color: Colors.white60, fontSize: 13),
-                            ),
-                          ),
-                          Expanded(child: Divider(color: Colors.white.withOpacity(0.15), thickness: 1)),
-                        ],
-                      ),
+                     
 
-                      const SizedBox(height: 24),
+                      //const SizedBox(height: 24),
 
                       // 📌 Botón de Google (CORREGIDO COMPLETO)
                       ElevatedButton.icon(
@@ -269,7 +257,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 23),
 
                       // BiometricAuthButton se mantiene igual
                       BiometricAuthButton(

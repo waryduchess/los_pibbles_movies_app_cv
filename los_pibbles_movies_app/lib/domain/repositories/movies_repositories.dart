@@ -49,8 +49,10 @@ class MoviesRepository {
     final data = await _client.get('search/movie',
         queryParams: {'query': query, 'page': '1'});
     final genreMap = await getGenres();
+    final queryLower = query.toLowerCase();
     return (data['results'] as List)
         .map((json) => MovieDto.fromJson(json))
+        .where((dto) => dto.title.toLowerCase().contains(queryLower))
         .map((dto) => Movie.fromDto(dto, genreMap))
         .toList();
   }
