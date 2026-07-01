@@ -36,7 +36,7 @@ class EmailStep extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Ingresa tu correo electrónico y te enviaremos un código para restablecerla.", 
+              "Ingresa tu correo electrónico", 
               style: Theme.of(context).textTheme.bodyMedium
             ),
             const SizedBox(height: 32),
@@ -60,7 +60,7 @@ class EmailStep extends StatelessWidget {
             const Spacer(),
             
             CrButton(
-              label: "Enviar código",
+              label: "Enviar ",
               isLoading: isLoading, 
               onPressed: onSubmit,
             ),
