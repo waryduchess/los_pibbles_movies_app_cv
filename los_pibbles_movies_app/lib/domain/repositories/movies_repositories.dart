@@ -1,6 +1,8 @@
 import 'package:los_pibbles_movies_app/domain/datasources/tmdb_api_client.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/presentation/models/movie_model.dart';
+import 'package:los_pibbles_movies_app/domain/entities/movie_actor.dart';
+import 'package:los_pibbles_movies_app/domain/entities/movie_detail.dart';
 
 class MoviesRepository {
   final TmdbApiClient _client = TmdbApiClient();
@@ -56,4 +58,60 @@ class MoviesRepository {
         .map((dto) => Movie.fromDto(dto, genreMap))
         .toList();
   }
+  Future<MovieDetail> getMovieDetail(int movieId) async {
+
+  final detail =
+      await _client.get('movie/$movieId');
+
+  final credits =
+      await _client.get('movie/$movieId/credits');
+
+  final videos =
+      await _client.get('movie/$movieId/videos');
+
+  String director = '';
+
+  final crew = credits['crew'] as List;
+
+  for (final item in crew) {
+    if (item['job'] == 'Director') {
+      director = item['name'];
+      break;
+    }
+  }
+
+  final cast = (credits['cast'] as List)
+      .take(10)
+      .map((e) => MovieActor.fromJson(e))
+      .toList();
+
+  String trailerKey = '';
+
+  final results = videos['results'] as List;
+
+  for (final item in results) {
+
+    if (item['site'] == 'YouTube' &&
+        item['type'] == 'Trailer') {
+
+      trailerKey = item['key'];
+
+      break;
+    }
+  }
+
+  return MovieDetail(
+
+    director: director,
+
+    cast: cast,
+
+    trailerKey: trailerKey,
+
+    runtime: detail['runtime'] ?? 0,
+
+
+  );
+
+}
 }
