@@ -191,7 +191,7 @@ class AuthBackendDatasource {
         "INNER JOIN usuarios u ON c.id_usuario = u.id_usuario "
         "LEFT JOIN likes_comentarios lc ON c.id_comentario = lc.id_comentario "
         "GROUP BY c.id_comentario "
-        "ORDER BY total_likes DESC, c.fecha DESC "
+        "ORDER BY c.fecha DESC "
         "LIMIT :limit",
         {"limit": limit},
       );

@@ -12,20 +12,23 @@ class HomeCommentsSection extends StatefulWidget {
 }
 
 class _HomeCommentsSectionState extends State<HomeCommentsSection> {
-  bool _loaded = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_loaded && SessionManager.userId != null) {
-      _loaded = true;
-      context.read<CommentsProvider>().loadTopComments(SessionManager.userId!);
-    }
-  }
+  int _reloadCounter = 0;
+  int _lastReloadAt = -1;
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CommentsProvider>();
+
+    _reloadCounter++;
+
+    if (_lastReloadAt < _reloadCounter - 1 && SessionManager.userId != null) {
+      _lastReloadAt = _reloadCounter;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<CommentsProvider>().loadTopComments(SessionManager.userId!);
+        }
+      });
+    }
 
     final realComments = provider.topComments;
 

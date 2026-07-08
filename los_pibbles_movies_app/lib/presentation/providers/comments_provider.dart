@@ -81,7 +81,7 @@ class CommentsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final rows = await _datasource.getTopComments(limit: 10);
+      final rows = await _datasource.getTopComments(limit: 5);
       final liked = await _datasource.getUserLikedCommentIds(userId);
       _likedCommentIds
         ..clear()
@@ -219,7 +219,7 @@ class CommentsProvider extends ChangeNotifier {
 
   Future<void> _refreshTopComments(int userId) async {
     try {
-      final rows = await _datasource.getTopComments(limit: 10);
+      final rows = await _datasource.getTopComments(limit: 5);
       _topComments = rows.map((r) {
         final cId = int.tryParse(r['id_comentario'].toString()) ?? 0;
         return CommentData(
