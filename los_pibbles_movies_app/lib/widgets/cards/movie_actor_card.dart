@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 class MovieActorCard extends StatelessWidget {
   final String name;
@@ -15,30 +16,39 @@ class MovieActorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(right: 18),
       child: SizedBox(
-        width: 90,
+        width: 72,
         child: Column(
           children: [
             CircleAvatar(
-              radius: 35,
-              backgroundColor: Colors.grey[800],
+              radius: 31,
+              backgroundColor: AppColors.secondary800,
               backgroundImage: NetworkImage(imageUrl),
+              onBackgroundImageError: (_, __) {},
             ),
-            const SizedBox(height: 8),
-            Text(name,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center),
-            Text(role,
-                style: const TextStyle(color: Colors.grey, fontSize: 11),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center),
+            const SizedBox(height: 7),
+            Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              role,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 10,
+              ),
+            ),
           ],
         ),
       ),
