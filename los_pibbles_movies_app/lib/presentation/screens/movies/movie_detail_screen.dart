@@ -1,4 +1,5 @@
 import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
+import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -282,18 +283,13 @@ Future<void> _openTrailer() async {
 
               const SizedBox(height: 22),
 
-              const Text(
-                'Reseñas',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              MovieReviewsSection(movieId: movie.id),
+              if (SessionManager.userId != null)
+                MovieCommentsSection(
+                  movieId: movie.id,
+                  userId: SessionManager.userId!,
+                )
+              else
+                MovieReviewsSection(movieId: movie.id),
             ],
           ),
         ),

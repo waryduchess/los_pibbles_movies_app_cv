@@ -6,6 +6,11 @@ class MovieReviewCard extends StatelessWidget {
   final String review;
   final String date;
   final String rating;
+  final String? avatarUrl;
+  final int? likeCount;
+  final bool? isLiked;
+  final VoidCallback? onLikeTap;
+  final bool showLike;
 
   const MovieReviewCard({
     super.key,
@@ -13,6 +18,11 @@ class MovieReviewCard extends StatelessWidget {
     required this.review,
     required this.date,
     required this.rating,
+    this.avatarUrl,
+    this.likeCount,
+    this.isLiked,
+    this.onLikeTap,
+    this.showLike = false,
   });
 
   @override
@@ -30,6 +40,15 @@ class MovieReviewCard extends StatelessWidget {
         children: [
           Row(
             children: [
+              if (avatarUrl != null) ...[
+                CircleAvatar(
+                  radius: 16,
+                  backgroundImage: NetworkImage(avatarUrl!),
+                  onBackgroundImageError: (_, __) {},
+                  child: const Icon(Icons.person, color: AppColors.white, size: 16),
+                ),
+                const SizedBox(width: 8),
+              ],
               Expanded(
                 child: Text(
                   user,
@@ -42,11 +61,38 @@ class MovieReviewCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (showLike && likeCount != null && onLikeTap != null)
+                GestureDetector(
+                  onTap: onLikeTap,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        (isLiked ?? false)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: (isLiked ?? false)
+                            ? AppColors.accent500
+                            : AppColors.textSecondary,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '$likeCount',
+                        style: TextStyle(
+                          color: AppColors.white.withOpacity(0.5),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(width: 6),
               Row(
                 children: List.generate(
                   5,
-                  (index) => const Icon(
-                    Icons.star,
+                  (index) => Icon(
+                    index < int.tryParse(rating)! ? Icons.star : Icons.star_border,
                     color: AppColors.warning,
                     size: 13,
                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/config/router/app_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
+import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +58,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MoviesProvider()..loadMovies()),
+        ChangeNotifierProvider(create: (_) => CommentsProvider()),
       ],
       child: MaterialApp.router(
         routerConfig: appRouter,
