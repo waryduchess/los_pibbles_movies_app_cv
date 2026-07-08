@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         final favProvider = context.read<FavoritesProvider>();
         await favProvider.loadFavoritesForUser(
-          int.tryParse(result['userId']) ?? 0,
+          int.parse(result['userId'].toString()),
         );
         if (!mounted) return;
         context.go('/');
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         final favProvider = context.read<FavoritesProvider>();
         await favProvider.loadFavoritesForUser(
-          int.tryParse(userData['userId'] ?? '0') ?? 0,
+          int.parse((userData['userId'] ?? '0').toString()),
         );
         if (!mounted) return;
         context.go('/');

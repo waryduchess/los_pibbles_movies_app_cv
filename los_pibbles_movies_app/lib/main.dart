@@ -59,11 +59,10 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MoviesProvider()..loadMovies()),
+        ChangeNotifierProvider(create: (_) => CommentsProvider()),
         ChangeNotifierProvider(
           create: (_) => FavoritesProvider(
-            idUsuario: SessionManager.userId != null
-                ? int.tryParse(SessionManager.userId!) ?? 0
-                : 0,
+            idUsuario: SessionManager.userId ?? 0,
           ),
         ),
       ],
