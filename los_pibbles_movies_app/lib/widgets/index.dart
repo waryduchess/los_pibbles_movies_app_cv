@@ -21,6 +21,7 @@ export 'cards/validation_card_widget.dart';
 
 // Movie Widgets - Componentes específicos de películas
 export 'movies/movie_reviews_section.dart';
+export 'movies/movie_comments_section.dart';
 export 'movies/movie_tech_info.dart';
 export 'movies/category_filter_bar.dart';
 export 'movies/cr_category_chip.dart';

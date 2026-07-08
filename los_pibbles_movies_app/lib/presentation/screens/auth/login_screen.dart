@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['success'] == true) {
         SessionManager.setSession(
-          result['userId'],
+          int.parse(result['userId'].toString()),
           result['userName'],
           foto: result['fotoPerfil'],
         );
@@ -98,8 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
         final userData = result['data'] as Map<String, dynamic>;
         
         SessionManager.setSession(
-          userData['userId'] ?? 'google_id_fallback', 
-          userData['userName'] ?? 'Usuario de Google'
+          int.parse((userData['userId'] ?? '0').toString()),
+          userData['userName'] ?? 'Usuario de Google',
         );
         final favProvider = context.read<FavoritesProvider>();
         await favProvider.loadFavoritesForUser(

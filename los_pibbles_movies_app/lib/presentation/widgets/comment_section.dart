@@ -6,45 +6,53 @@ class Comment {
   final String userName;
   final int rating;
   final String text;
+  final int? likeCount;
+  final bool? isLiked;
+  final int? commentId;
+  final bool isReal;
 
   const Comment({
     required this.avatarUrl,
     required this.userName,
     required this.rating,
     required this.text,
+    this.likeCount,
+    this.isLiked,
+    this.commentId,
+    this.isReal = false,
   });
 }
 
 const List<Comment> sampleComments = [
   Comment(
     avatarUrl: 'https://via.placeholder.com/48',
-    userName: 'María G.',
+    userName: 'Maria G.',
     rating: 5,
-    text: 'Excelente selección, me encantó la app.',
+    text: 'Excelente seleccion, me encanto la app.',
   ),
   Comment(
     avatarUrl: 'https://via.placeholder.com/48',
     userName: 'Carlos R.',
     rating: 4,
-    text: 'Muy buena, encontré pelis que no conocía.',
+    text: 'Muy buena, encontre pelis que no conocia.',
   ),
   Comment(
     avatarUrl: 'https://via.placeholder.com/48',
     userName: 'Ana L.',
     rating: 5,
-    text: 'Diseño moderno y fácil de navegar.',
+    text: 'Diseno moderno y facil de navegar.',
   ),
   Comment(
     avatarUrl: 'https://via.placeholder.com/48',
     userName: 'Pedro S.',
     rating: 4,
-    text: 'La recomiendo, buen catálogo de estrenos.',
+    text: 'La recomiendo, buen catalogo de estrenos.',
   ),
   Comment(
     avatarUrl: 'https://via.placeholder.com/48',
-    userName: 'Lucía M.',
+    userName: 'Lucia M.',
     rating: 5,
-    text: 'Perfecta para decidir qué ver el fin de semana.',
+    text: 'Perfecta para decidir que ver el fin de semana.',
   ),
   
 ];
@@ -108,15 +116,24 @@ class _CommentCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      comment.userName,
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        comment.userName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    const Spacer(),
+                    if (comment.isReal && comment.likeCount != null)
+                      _LikeBadge(
+                        count: comment.likeCount!,
+                        isLiked: comment.isLiked ?? false,
+                      ),
+                    const SizedBox(width: 6),
                     ...List.generate(
                       5,
                       (i) => Icon(
@@ -142,6 +159,35 @@ class _CommentCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _LikeBadge extends StatelessWidget {
+  final int count;
+  final bool isLiked;
+
+  const _LikeBadge({required this.count, required this.isLiked});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isLiked ? Icons.favorite : Icons.favorite_border,
+          color: isLiked ? AppColors.accent500 : AppColors.textSecondary,
+          size: 14,
+        ),
+        const SizedBox(width: 3),
+        Text(
+          '$count',
+          style: TextStyle(
+            color: AppColors.white.withOpacity(0.5),
+            fontSize: 11,
+          ),
+        ),
+      ],
     );
   }
 }
