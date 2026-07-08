@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/animated_favorite_button.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip2.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
@@ -75,15 +76,7 @@ class MovieCardItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Icon(
-                        movie.isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: movie.isFavorite
-                            ? AppColors.accent500
-                            : AppColors.white.withOpacity(0.55),
-                        size: 22,
-                      ),
+                      AnimatedFavoriteButton(movieId: movie.id, size: 22),
                     ],
                   ),
 
