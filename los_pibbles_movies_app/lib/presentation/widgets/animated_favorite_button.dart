@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:provider/provider.dart';
 
 class AnimatedFavoriteButton extends StatefulWidget {
   final int movieId;
   final double size;
+  final String? movieTitle;
 
   AnimatedFavoriteButton({
     Key? key,
     required this.movieId,
     this.size = 28,
+    this.movieTitle,
   }) : super(key: key ?? ValueKey(movieId));
 
   @override
@@ -63,9 +66,22 @@ class _AnimatedFavoriteButtonState extends State<AnimatedFavoriteButton>
 
     if (isFav) {
       _controller.reverse();
+      _showSnack('${widget.movieTitle} eliminado de favoritos', false);
     } else {
       _controller.forward();
+      _showSnack('${widget.movieTitle} agregado a favoritos', true);
     }
+  }
+
+  void _showSnack(String text, bool added) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        backgroundColor: added ? AppColors.success : AppColors.error,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override

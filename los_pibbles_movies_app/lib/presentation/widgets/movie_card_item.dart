@@ -76,7 +76,7 @@ class MovieCardItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      AnimatedFavoriteButton(movieId: movie.id, size: 28),
+                      AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
                     ],
                   ),
 

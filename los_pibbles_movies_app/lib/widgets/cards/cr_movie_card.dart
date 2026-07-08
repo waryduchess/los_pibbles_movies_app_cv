@@ -58,7 +58,7 @@ class MovieCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      AnimatedFavoriteButton(movieId: movie.id, size: 24),
+                      AnimatedFavoriteButton(movieId: movie.id, size: 24, movieTitle: movie.title),
                     ],
                   ),
                   const SizedBox(height: 4),

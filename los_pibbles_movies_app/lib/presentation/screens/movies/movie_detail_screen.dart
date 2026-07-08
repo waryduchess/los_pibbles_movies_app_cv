@@ -111,7 +111,7 @@ Future<void> _openTrailer() async {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Center(
-                      child: AnimatedFavoriteButton(movieId: movie.id, size: 28),
+                      child: AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
                     ),
                   ),
                   const SizedBox(width: 10),
