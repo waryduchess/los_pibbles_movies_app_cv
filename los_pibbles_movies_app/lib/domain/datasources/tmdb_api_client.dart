@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 
 class TmdbApiClient {
   static const String _baseUrl = 'api.themoviedb.org';
@@ -28,12 +30,26 @@ class TmdbApiClient {
       },
     );
 
-    final response = await http.get(uri);
+    final http.Response response;
+
+    try {
+      response = await http.get(uri);
+    } on SocketException {
+      throw AppException.noInternet();
+    } on HttpException {
+      throw AppException.noInternet();
+    }
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
+    } else if (response.statusCode == 404) {
+      throw AppException.notFound();
+    } else if (response.statusCode >= 500) {
+      throw AppException.serverError();
     } else {
-      throw Exception('Error al obtener datos: ${response.statusCode}');
+      throw AppException.unknown(
+        'Error al obtener datos: ${response.statusCode}',
+      );
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie_detail.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
@@ -19,6 +20,7 @@ class MoviesProvider extends ChangeNotifier {
   bool loadingMovieDetail = false;
 
   String? errorMessage;
+  AppErrorType? errorType;
 
   // Detalle de película
   MovieDetail? selectedMovieDetail;
@@ -44,6 +46,7 @@ class MoviesProvider extends ChangeNotifier {
   Future<void> loadMovies() async {
     isLoading = true;
     errorMessage = null;
+    errorType = null;
     notifyListeners();
 
     try {
@@ -67,6 +70,11 @@ class MoviesProvider extends ChangeNotifier {
       ];
     } catch (e) {
       errorMessage = 'Error al cargar películas: $e';
+      if (e is AppException) {
+        errorType = e.type;
+      } else {
+        errorType = AppErrorType.unknown;
+      }
     }
 
     isLoading = false;
