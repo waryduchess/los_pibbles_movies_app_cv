@@ -10,11 +10,13 @@ class FeaturedMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
-      child: Stack(
-        fit: StackFit.expand, 
-        children: [
+    return GestureDetector(
+      onTap: () => context.push('/movie-detail', extra: movie),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
           
           Positioned.fill(
             child: Image.network(
@@ -113,6 +115,7 @@ class FeaturedMovieCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
