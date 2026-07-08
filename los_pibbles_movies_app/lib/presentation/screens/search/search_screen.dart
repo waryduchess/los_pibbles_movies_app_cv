@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
+import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
@@ -90,10 +91,10 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               Row(
                 children: [
-                  //IconButton(
-                   // icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                   // onPressed: () => Navigator.of(context).pop(),
-                  //),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                    onPressed: () => context.pop(),
+                  ),
                   const SizedBox(width: 8),
                   const Text(
                     'Búsqueda',

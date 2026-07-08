@@ -1,4 +1,5 @@
 import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/animated_favorite_button.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
@@ -20,67 +21,17 @@ class MovieDetailScreen extends StatefulWidget {
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen>
-    with SingleTickerProviderStateMixin {
-  bool isFavorite = false;
-  late AnimationController _heartController;
-  late Animation<double> _heartScale;
+class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  isFavorite = widget.movie.isFavorite;
-
-  Future.microtask(() {
-    context.read<MoviesProvider>().loadMovieDetail(
-      widget.movie.id,
-    );
-  });
-
-  _heartController = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 250),
-  );
-
-  _heartScale = Tween<double>(
-    begin: 1,
-    end: 1.35,
-  ).animate(
-    CurvedAnimation(
-      parent: _heartController,
-      curve: Curves.easeOutBack,
-    ),
-  );
-}
-  @override
-  void dispose() {
-    _heartController.dispose();
-    super.dispose();
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      isFavorite = !isFavorite;
+    Future.microtask(() {
+      context.read<MoviesProvider>().loadMovieDetail(
+        widget.movie.id,
+      );
     });
-
-    _heartController.forward(from: 0).then((_) {
-      _heartController.reverse();
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor:
-            isFavorite ? AppColors.accent500 : AppColors.secondary800,
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          isFavorite
-              ? '${widget.movie.title} se agregó a favoritos'
-              : '${widget.movie.title} se quitó de favoritos',
-          style: const TextStyle(color: AppColors.white),
-        ),
-      ),
-    );
   }
 
 Future<void> _openTrailer() async {
@@ -153,16 +104,15 @@ Future<void> _openTrailer() async {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  ScaleTransition(
-                    scale: _heartScale,
-                    child: _CircleActionButton(
-                      icon: isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: isFavorite
-                          ? AppColors.accent500
-                          : AppColors.white,
-                      onTap: _toggleFavorite,
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary900.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child: AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
                     ),
                   ),
                   const SizedBox(width: 10),
