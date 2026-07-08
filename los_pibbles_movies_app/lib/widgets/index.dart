@@ -4,6 +4,7 @@ export 'common/cr_app_logo.dart';
 export 'common/cr_avatar_badge.dart';
 export 'common/cr_section_header.dart';
 export 'common/cr_empty_state.dart';
+export 'common/cr_error_state.dart';
 export 'common/custom_header.dart';
 
 // Input Widgets - Campos de formulario e entrada

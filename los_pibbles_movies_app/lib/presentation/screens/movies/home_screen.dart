@@ -6,6 +6,7 @@ import 'package:los_pibbles_movies_app/presentation/widgets/featured_movie_carou
 import 'package:los_pibbles_movies_app/presentation/widgets/home_comments_section.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -30,16 +31,10 @@ class HomeScreenBody extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (provider.errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(
-            provider.errorMessage!,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.white),
-          ),
-        ),
+    if (provider.errorType != null) {
+      return CrErrorState(
+        type: provider.errorType!,
+        onRetry: () => provider.loadMovies(),
       );
     }
 
