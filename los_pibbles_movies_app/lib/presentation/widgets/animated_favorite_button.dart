@@ -7,11 +7,11 @@ class AnimatedFavoriteButton extends StatefulWidget {
   final int movieId;
   final double size;
 
-  const AnimatedFavoriteButton({
-    super.key,
+  AnimatedFavoriteButton({
+    Key? key,
     required this.movieId,
     this.size = 28,
-  });
+  }) : super(key: key ?? ValueKey(movieId));
 
   @override
   State<AnimatedFavoriteButton> createState() => _AnimatedFavoriteButtonState();
@@ -79,15 +79,19 @@ class _AnimatedFavoriteButtonState extends State<AnimatedFavoriteButton>
     context.watch<FavoritesProvider>();
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: _toggle,
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: Lottie.asset(
-          'assets/animations/Add to favorites.json',
-          controller: _controller,
-          animate: false,
-          fit: BoxFit.contain,
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: SizedBox(
+          width: widget.size,
+          height: widget.size,
+          child: Lottie.asset(
+            'assets/animations/Add to favorites.json',
+            controller: _controller,
+            animate: false,
+            fit: BoxFit.contain,
+          ),
         ),
       ),
     );
