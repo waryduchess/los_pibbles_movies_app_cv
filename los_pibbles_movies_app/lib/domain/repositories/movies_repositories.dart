@@ -58,6 +58,14 @@ class MoviesRepository {
         .map((dto) => Movie.fromDto(dto, genreMap))
         .toList();
   }
+
+  Future<Movie> getMovieById(int movieId) async {
+    final data = await _client.get('movie/$movieId');
+    final genreMap = await getGenres();
+    final dto = MovieDto.fromJson(data);
+    return Movie.fromDto(dto, genreMap);
+  }
+
   Future<MovieDetail> getMovieDetail(int movieId) async {
 
   final detail =

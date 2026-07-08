@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/movie.dart'; 
+import 'package:los_pibbles_movies_app/presentation/widgets/animated_favorite_button.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 class MovieCard extends StatelessWidget {
@@ -57,7 +58,7 @@ class MovieCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const Icon(Icons.favorite_border, color: AppColors.textSecondary, size: 20),
+                      AnimatedFavoriteButton(movieId: movie.id, size: 24, movieTitle: movie.title),
                     ],
                   ),
                   const SizedBox(height: 4),
