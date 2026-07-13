@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 
 class FavoritesProvider extends ChangeNotifier {
-  final Set<int> _favoriteMovieIds = {}; // Cambiado a int para coincidir con tu MySQL (id_pelicula)
+  final Set<int> _favoriteMovieIds = {};
   bool _isInitialized = false;
-  int _idUsuario; // ID del usuario logueado en MySQL
+  int _idUsuario;
+  AppErrorType? _errorType;
 
   bool get isInitialized => _isInitialized;
   int get idUsuario => _idUsuario;
   Set<int> get favoriteMovieIds => _favoriteMovieIds;
+  AppErrorType? get errorType => _errorType;
 
   // Pasamos el idUsuario en el constructor al iniciar sesión
   FavoritesProvider({required int idUsuario}) : _idUsuario = idUsuario {
@@ -23,6 +26,7 @@ class FavoritesProvider extends ChangeNotifier {
     _idUsuario = newIdUsuario;
     _favoriteMovieIds.clear();
     _isInitialized = false;
+    _errorType = null;
     notifyListeners();
     if (_idUsuario > 0) {
       await _loadFavoritesFromMySQL();
@@ -49,6 +53,7 @@ class FavoritesProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
+      _errorType = AppErrorType.databaseError;
       debugPrint('Error cargando favoritos de MySQL: $e');
     } finally {
       await conn.close();
@@ -126,6 +131,14 @@ class FavoritesProvider extends ChangeNotifier {
   // Llama a esto cuando el usuario CIERRE SESIÓN para limpiar la memoria caché
   void clearLocalState() {
     _favoriteMovieIds.clear();
+    _errorType = null;
     notifyListeners();
+  }
+
+  Future<void> retryLoadFavorites() async {
+    _errorType = null;
+    _isInitialized = false;
+    notifyListeners();
+    await _loadFavoritesFromMySQL();
   }
 }

@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // 📌 No olvides importar dotenv
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 
 class AuthService {
   // 📌 Configuración de Google Sign-In (V7 CORRECTA)
@@ -32,33 +33,37 @@ class AuthService {
     String correo,
     String password,
   ) async {
-    final conn = await DBConnection.getConnection();
     try {
-      final results = await conn.execute(
-        'SELECT id_usuario, nombres, apellidos, foto_perfil, password FROM usuarios WHERE correo = :correo',
-        {'correo': correo},
-      );
+      final conn = await DBConnection.getConnection();
+      try {
+        final results = await conn.execute(
+          'SELECT id_usuario, nombres, apellidos, foto_perfil, password FROM usuarios WHERE correo = :correo',
+          {'correo': correo},
+        );
 
-      if (results.rows.isEmpty) {
-        return {'success': false, 'error': 'Correo o contraseña incorrectos'};
+        if (results.rows.isEmpty) {
+          return {'success': false, 'error': 'Correo o contraseña incorrectos'};
+        }
+
+        final user = results.rows.first.assoc();
+        final storedPassword = user['password']!;
+        final hashedInput = _hashPassword(password);
+
+        if (storedPassword != hashedInput) {
+          return {'success': false, 'error': 'Correo o contraseña incorrectos'};
+        }
+
+        return {
+          'success': true,
+          'userId': user['id_usuario']!,
+          'userName': user['nombres']!,
+          'fotoPerfil': user['foto_perfil'],
+        };
+      } finally {
+        await conn.close();
       }
-
-      final user = results.rows.first.assoc();
-      final storedPassword = user['password']!;
-      final hashedInput = _hashPassword(password);
-
-      if (storedPassword != hashedInput) {
-        return {'success': false, 'error': 'Correo o contraseña incorrectos'};
-      }
-
-      return {
-        'success': true,
-        'userId': user['id_usuario']!,
-        'userName': user['nombres']!,
-        'fotoPerfil': user['foto_perfil'],
-      };
-    } finally {
-      await conn.close();
+    } catch (e) {
+      throw AppException.databaseError('Error de conexión a la base de datos');
     }
   }
 
@@ -69,42 +74,44 @@ class AuthService {
     String correo,
     String password,
   ) async {
-    final conn = await DBConnection.getConnection();
     try {
-      final existing = await conn.execute(
-        'SELECT id_usuario FROM usuarios WHERE correo = :correo',
-        {'correo': correo},
-      );
+      final conn = await DBConnection.getConnection();
+      try {
+        final existing = await conn.execute(
+          'SELECT id_usuario FROM usuarios WHERE correo = :correo',
+          {'correo': correo},
+        );
 
-      if (existing.rows.isNotEmpty) {
-        return {'success': false, 'error': 'Este correo ya está registrado'};
+        if (existing.rows.isNotEmpty) {
+          return {'success': false, 'error': 'Este correo ya está registrado'};
+        }
+
+        final hashedPassword = _hashPassword(password);
+
+        await conn.execute(
+          'INSERT INTO usuarios (nombres, apellidos, correo, password, fecha_registro) VALUES (:nombres, :apellidos, :correo, :password, NOW())',
+          {
+            'nombres': nombres,
+            'apellidos': apellidos,
+            'correo': correo,
+            'password': hashedPassword,
+          },
+        );
+
+        return {'success': true, 'message': 'Usuario registrado exitosamente'};
+      } finally {
+        await conn.close();
       }
-
-      final hashedPassword = _hashPassword(password);
-
-      await conn.execute(
-        'INSERT INTO usuarios (nombres, apellidos, correo, password, fecha_registro) VALUES (:nombres, :apellidos, :correo, :password, NOW())',
-        {
-          'nombres': nombres,
-          'apellidos': apellidos,
-          'correo': correo,
-          'password': hashedPassword,
-        },
-      );
-
-      return {'success': true, 'message': 'Usuario registrado exitosamente'};
-    } finally {
-      await conn.close();
+    } catch (e) {
+      throw AppException.databaseError('Error de conexión a la base de datos');
     }
   }
 
   // 📌 INICIO DE SESIÓN Y REGISTRO CON GOOGLE (V7)
   static Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
-      // 1. Ejecutar la inicialización obligatoria
       await _initGoogle();
 
-      // 2. Método 'authenticate()' correcto para la V7
       final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
 
       if (googleUser == null) {
@@ -118,56 +125,61 @@ class AuthService {
       final nombres = nameParts.isNotEmpty ? nameParts.first : 'Usuario';
       final apellidos = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
-      final conn = await DBConnection.getConnection();
       try {
-        final results = await conn.execute(
-          'SELECT id_usuario, nombres, foto_perfil FROM usuarios WHERE correo = :correo',
-          {'correo': email},
-        );
-
-        if (results.rows.isNotEmpty) {
-          final user = results.rows.first.assoc();
-          return {
-            'success': true,
-            'data': {
-              'userId': user['id_usuario']!,
-              'userName': user['nombres']!,
-              'fotoPerfil': user['foto_perfil'],
-            }
-          };
-        } else {
-          final placeholderPassword = _hashPassword('GOOGLE_${googleUser.id}');
-
-          await conn.execute(
-            'INSERT INTO usuarios (nombres, apellidos, correo, password, fecha_registro) VALUES (:nombres, :apellidos, :correo, :password, NOW())',
-            {
-              'nombres': nombres,
-              'apellidos': apellidos,
-              'correo': email,
-              'password': placeholderPassword,
-            },
-          );
-
-          final newUserResults = await conn.execute(
-            'SELECT id_usuario, foto_perfil FROM usuarios WHERE correo = :correo',
+        final conn = await DBConnection.getConnection();
+        try {
+          final results = await conn.execute(
+            'SELECT id_usuario, nombres, foto_perfil FROM usuarios WHERE correo = :correo',
             {'correo': email},
           );
-          
-          final newUser = newUserResults.rows.first.assoc();
 
-          return {
-            'success': true,
-            'data': {
-              'userId': newUser['id_usuario']!,
-              'userName': nombres,
-              'fotoPerfil': newUser['foto_perfil'],
-            }
-          };
+          if (results.rows.isNotEmpty) {
+            final user = results.rows.first.assoc();
+            return {
+              'success': true,
+              'data': {
+                'userId': user['id_usuario']!,
+                'userName': user['nombres']!,
+                'fotoPerfil': user['foto_perfil'],
+              }
+            };
+          } else {
+            final placeholderPassword = _hashPassword('GOOGLE_${googleUser.id}');
+
+            await conn.execute(
+              'INSERT INTO usuarios (nombres, apellidos, correo, password, fecha_registro) VALUES (:nombres, :apellidos, :correo, :password, NOW())',
+              {
+                'nombres': nombres,
+                'apellidos': apellidos,
+                'correo': email,
+                'password': placeholderPassword,
+              },
+            );
+
+            final newUserResults = await conn.execute(
+              'SELECT id_usuario, foto_perfil FROM usuarios WHERE correo = :correo',
+              {'correo': email},
+            );
+            
+            final newUser = newUserResults.rows.first.assoc();
+
+            return {
+              'success': true,
+              'data': {
+                'userId': newUser['id_usuario']!,
+                'userName': nombres,
+                'fotoPerfil': newUser['foto_perfil'],
+              }
+            };
+          }
+        } finally {
+          await conn.close();
         }
-      } finally {
-        await conn.close();
+      } catch (e) {
+        throw AppException.databaseError('Error de conexión a la base de datos');
       }
     } catch (e) {
+      if (e is AppException) rethrow;
       return {'success': false, 'error': 'Error de conexión con Google o BD: $e'};
     }
   }

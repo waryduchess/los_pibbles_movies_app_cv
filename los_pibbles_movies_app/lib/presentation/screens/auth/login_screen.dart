@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
@@ -22,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
   bool _isGoogleLoading = false; // Estado para el botón de Google
+  AppErrorType? _errorType;
 
   @override
   void initState() {
@@ -73,12 +75,16 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error de conexion: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      if (e is AppException && e.type == AppErrorType.databaseError) {
+        setState(() => _errorType = AppErrorType.databaseError);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error de conexion: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -119,12 +125,16 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isGoogleLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error crítico de conexión: $e'), 
-          backgroundColor: AppColors.error
-        ),
-      );
+      if (e is AppException && e.type == AppErrorType.databaseError) {
+        setState(() => _errorType = AppErrorType.databaseError);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error crítico de conexión: $e'), 
+            backgroundColor: AppColors.error
+          ),
+        );
+      }
     }
   }
 
@@ -139,6 +149,24 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     // Definimos si alguno de los botones está cargando para deshabilitar ambos
     final isAnyLoading = _isLoading || _isGoogleLoading;
+
+    if (_errorType != null) {
+      return Scaffold(
+        backgroundColor: AppColors.secondary900,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(color: AppColors.secondary900),
+            ),
+            const GradientBackgroundWidget(),
+            CrErrorState(
+              type: _errorType!,
+              onRetry: () => setState(() => _errorType = null),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.secondary900,

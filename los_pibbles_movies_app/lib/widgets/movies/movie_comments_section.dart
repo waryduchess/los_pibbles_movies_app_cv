@@ -3,6 +3,7 @@ import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.
 import 'package:los_pibbles_movies_app/presentation/widgets/add_comment_sheet.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/cards/movie_review_card.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';
 
 class MovieCommentsSection extends StatefulWidget {
@@ -58,6 +59,26 @@ class _MovieCommentsSectionState extends State<MovieCommentsSection> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CommentsProvider>();
+
+    if (provider.isLoadingMovieComments) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 24),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (provider.errorType != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: CrErrorState(
+          type: provider.errorType!,
+          onRetry: () => provider.retryLoadMovieComments(widget.movieId, widget.userId),
+        ),
+      );
+    }
+
     final comments = provider.commentsForMovie(widget.movieId);
 
     return Column(
@@ -85,14 +106,7 @@ class _MovieCommentsSectionState extends State<MovieCommentsSection> {
           ],
         ),
         const SizedBox(height: 12),
-        if (provider.isLoadingMovieComments)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: CircularProgressIndicator(),
-            ),
-          )
-        else if (comments.isNotEmpty)
+        if (comments.isNotEmpty)
           ...comments.map((c) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: MovieReviewCard(

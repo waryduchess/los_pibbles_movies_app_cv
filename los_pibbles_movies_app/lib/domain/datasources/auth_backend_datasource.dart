@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 
 class AuthBackendDatasource {
 
@@ -24,7 +25,7 @@ class AuthBackendDatasource {
       );
       return result.rows.isNotEmpty;
     } catch (e) {
-      throw Exception('Error al conectar con la base de datos de usuarios.');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }
@@ -42,7 +43,7 @@ class AuthBackendDatasource {
         },
       );
     } catch (e) {
-      throw Exception('No se pudo actualizar la contraseña en el servidor MySQL.');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }
@@ -58,7 +59,7 @@ class AuthBackendDatasource {
         {'foto': photoUrl, 'id_usuario': userId},
       );
     } catch (e) {
-      throw Exception('No se pudo actualizar la foto de perfil: $e');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }
@@ -79,7 +80,7 @@ class AuthBackendDatasource {
 
       return result.rows.map((row) => row.assoc()).toList();
     } catch (e) {
-      throw Exception('Error al cargar comentarios desde MySQL: $e');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }
@@ -106,7 +107,7 @@ class AuthBackendDatasource {
         },
       );
     } catch (e) {
-      throw Exception('Error al guardar comentario: $e');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }
@@ -173,7 +174,7 @@ class AuthBackendDatasource {
         return true;
       }
     } catch (e) {
-      throw Exception('Error al alternar like: $e');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }
@@ -198,7 +199,7 @@ class AuthBackendDatasource {
 
       return result.rows.map((row) => row.assoc()).toList();
     } catch (e) {
-      throw Exception('Error al cargar top comentarios: $e');
+      throw AppException.databaseError();
     } finally {
       await conn.close();
     }

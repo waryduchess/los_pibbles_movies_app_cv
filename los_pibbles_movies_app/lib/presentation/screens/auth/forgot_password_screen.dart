@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// Importamos tu Datasource modificado para MySQL
 import 'package:los_pibbles_movies_app/domain/datasources/auth_backend_datasource.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 
-// Tus widgets globales de pasos de UI
 import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 
@@ -37,6 +36,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   double _passwordStrengthValue = 0.25;
   Color _passwordStrengthColor = Colors.red;
   bool _isResetting = false;
+  AppErrorType? _errorType;
 
   @override
   void initState() {
@@ -91,7 +91,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         setState(() => _emailErrorMessage = 'Este correo no está registrado en el sistema.');
       }
     } catch (e) {
-      setState(() => _emailErrorMessage = e.toString().replaceAll('Exception: ', ''));
+      if (e is AppException && e.type == AppErrorType.databaseError) {
+        setState(() => _errorType = AppErrorType.databaseError);
+      } else {
+        setState(() => _emailErrorMessage = e.toString().replaceAll('Exception: ', ''));
+      }
     } finally {
       setState(() { _isLoadingEmail = false; });
     }
@@ -113,7 +117,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       
       _nextPage(); 
     } catch (e) {
-      if (mounted) {
+      if (e is AppException && e.type == AppErrorType.databaseError) {
+        setState(() => _errorType = AppErrorType.databaseError);
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceAll('Exception: ', '')),
@@ -143,6 +149,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     // Preservamos el color oscuro de tu interfaz por consistencia
     const scaffoldBgColor = Color(0xFF0B0C1A);
     final colors = Theme.of(context).colorScheme;
+
+    if (_errorType != null) {
+      return Scaffold(
+        backgroundColor: scaffoldBgColor,
+        body: CrErrorState(
+          type: _errorType!,
+          onRetry: () => setState(() => _errorType = null),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: scaffoldBgColor,

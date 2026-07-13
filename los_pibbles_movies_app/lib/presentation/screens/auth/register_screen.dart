@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
@@ -21,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   
   bool _isLoading = false;
+  AppErrorType? _errorType;
 
   // Estados de validación
   bool _isTypingNombres = false, _nombresNoNumbers = true, _nombresTitleCase = false;
@@ -122,8 +124,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showErrorSnackBar('Error de conexión: $e');
+      if (e is AppException && e.type == AppErrorType.databaseError) {
+        setState(() => _errorType = AppErrorType.databaseError);
+      } else {
+        _showErrorSnackBar('Error de conexión: $e');
+      }
     }
+  }
+
+  void _retryRegister() {
+    setState(() => _errorType = null);
   }
 
   @override
@@ -134,6 +144,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final bool showApellidosValidation = _isTypingApellidos && !(_apellidosNoNumbers && _apellidosTitleCase);
     final bool showCorreoValidation = _isTypingCorreo && !_correoValid;
     final bool showPasswordValidation = _isTypingPassword && !(_hasLetter && _hasUppercase && _hasNumber && _hasMinLength && _hasNoSpaces && _passwordsMatch);
+
+    if (_errorType != null) {
+      return Scaffold(
+        backgroundColor: AppColors.secondary900,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(color: AppColors.secondary900),
+            ),
+            const GradientBackgroundWidget(),
+            CrErrorState(
+              type: _errorType!,
+              onRetry: _retryRegister,
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.secondary900,

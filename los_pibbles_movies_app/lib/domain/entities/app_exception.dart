@@ -1,4 +1,4 @@
-enum AppErrorType { noInternet, notFound, serverError, unknown }
+enum AppErrorType { noInternet, notFound, serverError, databaseError, unknown }
 
 class AppException implements Exception {
   final AppErrorType type;
@@ -22,6 +22,11 @@ class AppException implements Exception {
   factory AppException.serverError([String? msg]) => AppException(
         type: AppErrorType.serverError,
         message: msg ?? 'Error en el servidor',
+      );
+
+  factory AppException.databaseError([String? msg]) => AppException(
+        type: AppErrorType.databaseError,
+        message: msg ?? 'Error de conexión a la base de datos',
       );
 
   factory AppException.unknown([String? msg]) => AppException(

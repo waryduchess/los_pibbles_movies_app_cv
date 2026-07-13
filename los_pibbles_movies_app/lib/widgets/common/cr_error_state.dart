@@ -195,6 +195,83 @@ class _ServerErrorPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+class _DatabaseErrorPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+
+    final topOvalY = cy - 22;
+    final midOvalY = cy - 4;
+    final botOvalY = cy + 14;
+
+    final ovalPaint = Paint()
+      ..color = AppColors.primary500
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+
+    void drawOval(double y) {
+      final path = Path()
+        ..addOval(Rect.fromCenter(center: Offset(cx, y), width: 56, height: 16));
+      canvas.drawPath(path, ovalPaint);
+    }
+
+    drawOval(topOvalY);
+    drawOval(botOvalY);
+
+    final linePaint = Paint()
+      ..color = AppColors.primary400
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawLine(
+      Offset(cx - 28, topOvalY),
+      Offset(cx - 28, botOvalY),
+      linePaint,
+    );
+    canvas.drawLine(
+      Offset(cx + 28, topOvalY),
+      Offset(cx + 28, botOvalY),
+      linePaint,
+    );
+
+    final midArc = Path()
+      ..addArc(
+        Rect.fromCenter(center: Offset(cx, midOvalY), width: 56, height: 16),
+        0,
+        math.pi,
+      );
+    canvas.drawPath(midArc, Paint()
+      ..color = AppColors.primary400
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5);
+
+    final exMark = Path()
+      ..moveTo(cx, cy - 42)
+      ..lineTo(cx + 18, cy - 19)
+      ..lineTo(cx - 18, cy - 19)
+      ..close();
+    canvas.drawPath(
+      exMark,
+      Paint()..color = AppColors.error..style = PaintingStyle.fill,
+    );
+
+    final exPaint = Paint()
+      ..color = AppColors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(cx, cy - 35), Offset(cx, cy - 27), exPaint);
+    canvas.drawCircle(
+      Offset(cx, cy - 23),
+      1.5,
+      Paint()..color = AppColors.white..style = PaintingStyle.fill,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class CrErrorState extends StatefulWidget {
   final AppErrorType type;
   final VoidCallback? onRetry;
@@ -243,6 +320,9 @@ class _CrErrorStateState extends State<CrErrorState>
       case AppErrorType.notFound:
         return _NotFoundPainter();
       case AppErrorType.serverError:
+        return _ServerErrorPainter();
+      case AppErrorType.databaseError:
+        return _DatabaseErrorPainter();
       case AppErrorType.unknown:
         return _ServerErrorPainter();
     }
@@ -255,6 +335,9 @@ class _CrErrorStateState extends State<CrErrorState>
       case AppErrorType.notFound:
         return AppColors.info.withOpacity(0.4);
       case AppErrorType.serverError:
+        return AppColors.error.withOpacity(0.4);
+      case AppErrorType.databaseError:
+        return AppColors.error.withOpacity(0.4);
       case AppErrorType.unknown:
         return AppColors.error.withOpacity(0.4);
     }
@@ -268,6 +351,8 @@ class _CrErrorStateState extends State<CrErrorState>
         return 'No encontrado';
       case AppErrorType.serverError:
         return 'Error del servidor';
+      case AppErrorType.databaseError:
+        return 'Error 500';
       case AppErrorType.unknown:
         return 'Algo salió mal';
     }
@@ -281,6 +366,8 @@ class _CrErrorStateState extends State<CrErrorState>
         return 'No pudimos encontrar lo que buscas.\nIntenta con otra búsqueda.';
       case AppErrorType.serverError:
         return 'Tuvimos un problema en el servidor.\nEstamos trabajando para solucionarlo.';
+      case AppErrorType.databaseError:
+        return 'No pudimos conectar con la base de datos.\nInténtalo de nuevo más tarde.';
       case AppErrorType.unknown:
         return 'Ocurrió un error inesperado.\nPor favor inténtalo de nuevo.';
     }

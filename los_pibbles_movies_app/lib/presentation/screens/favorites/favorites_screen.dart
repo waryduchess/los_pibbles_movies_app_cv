@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -120,6 +122,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     if (!provider.isInitialized) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (provider.errorType != null) {
+      return Scaffold(
+        backgroundColor: AppColors.secondary900,
+        body: CrErrorState(
+          type: provider.errorType!,
+          onRetry: () => provider.retryLoadFavorites(),
+        ),
       );
     }
 

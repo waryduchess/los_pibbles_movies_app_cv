@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';
 
 class HomeCommentsSection extends StatefulWidget {
@@ -18,6 +20,18 @@ class _HomeCommentsSectionState extends State<HomeCommentsSection> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CommentsProvider>();
+
+    if (provider.errorType != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: CrErrorState(
+          type: provider.errorType!,
+          onRetry: SessionManager.userId != null
+              ? () => context.read<CommentsProvider>().retryLoadTopComments(SessionManager.userId!)
+              : null,
+        ),
+      );
+    }
 
     _reloadCounter++;
 

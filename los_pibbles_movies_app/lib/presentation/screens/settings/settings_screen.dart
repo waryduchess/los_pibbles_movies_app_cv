@@ -2,10 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:los_pibbles_movies_app/domain/services/profile_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';
 import 'package:los_pibbles_movies_app/widgets/settings/biometric_card_widget.dart';
 import 'package:los_pibbles_movies_app/widgets/settings/menu_card_widget.dart';
@@ -27,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
   bool _biometricEnabled = false;
+  AppErrorType? _errorType;
 
   String? get _fotoPerfil => SessionManager.fotoPerfil;
   String? get _userName => SessionManager.userName;
@@ -75,7 +78,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await ProfileService.updatePhoto(userId, imageFile);
       setState(() {});
     } catch (e) {
-      if (mounted) {
+      if (e is AppException && e.type == AppErrorType.databaseError) {
+        setState(() => _errorType = AppErrorType.databaseError);
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
@@ -98,6 +103,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_errorType != null) {
+      return Scaffold(
+        backgroundColor: AppColors.secondary1000,
+        body: CrErrorState(
+          type: _errorType!,
+          onRetry: () => setState(() => _errorType = null),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.secondary1000,
       body: SafeArea(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/datasources/auth_backend_datasource.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
 
 class CommentData {
@@ -62,9 +63,11 @@ class CommentsProvider extends ChangeNotifier {
 
   bool _isLoadingMovieComments = false;
   bool _isLoadingTopComments = false;
+  AppErrorType? _errorType;
 
   bool get isLoadingMovieComments => _isLoadingMovieComments;
   bool get isLoadingTopComments => _isLoadingTopComments;
+  AppErrorType? get errorType => _errorType;
 
   List<CommentData> get topComments => _topComments;
 
@@ -78,6 +81,7 @@ class CommentsProvider extends ChangeNotifier {
 
   Future<void> loadTopComments(int userId) async {
     _isLoadingTopComments = true;
+    _errorType = null;
     notifyListeners();
 
     try {
@@ -103,6 +107,7 @@ class CommentsProvider extends ChangeNotifier {
         );
       }).toList();
     } catch (e) {
+      _errorType = AppErrorType.databaseError;
       debugPrint('Error cargando top comentarios: $e');
       _topComments = [];
     }
@@ -115,6 +120,7 @@ class CommentsProvider extends ChangeNotifier {
 
   Future<void> loadMovieComments(int movieId, int userId) async {
     _isLoadingMovieComments = true;
+    _errorType = null;
     notifyListeners();
 
     try {
@@ -144,6 +150,7 @@ class CommentsProvider extends ChangeNotifier {
 
       _movieComments[movieId] = comments;
     } catch (e) {
+      _errorType = AppErrorType.databaseError;
       debugPrint('Error cargando comentarios de pelicula: $e');
       _movieComments[movieId] = [];
     }
@@ -250,6 +257,19 @@ class CommentsProvider extends ChangeNotifier {
     _movieComments.clear();
     _topComments.clear();
     _likedCommentIds.clear();
+    _errorType = null;
     notifyListeners();
+  }
+
+  Future<void> retryLoadTopComments(int userId) async {
+    _errorType = null;
+    notifyListeners();
+    await loadTopComments(userId);
+  }
+
+  Future<void> retryLoadMovieComments(int movieId, int userId) async {
+    _errorType = null;
+    notifyListeners();
+    await loadMovieComments(movieId, userId);
   }
 }
