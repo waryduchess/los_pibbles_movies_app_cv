@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
+import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class SearchScreen extends StatefulWidget {
   static const name = 'search--screen';
@@ -23,7 +26,8 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Movie> _results = [];
   bool _isLoading = false;
   bool _hasSearched = false;
-  String? _errorMessage;
+  AppErrorType? _errorType;
+  String _lastQuery = '';
   Timer? _debounce;
 
   @override
@@ -37,12 +41,12 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (query.trim().isEmpty) {
-        setState(() {
-          _results = [];
-          _isLoading = false;
-          _hasSearched = false;
-          _errorMessage = null;
-        });
+      setState(() {
+        _results = [];
+        _isLoading = false;
+        _hasSearched = false;
+        _errorType = null;
+      });
         return;
       }
       _performSearch(query.trim());
@@ -53,7 +57,8 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _isLoading = true;
       _hasSearched = true;
-      _errorMessage = null;
+      _errorType = null;
+      _lastQuery = query;
     });
 
     try {
@@ -66,7 +71,11 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         _results = [];
         _isLoading = false;
-        _errorMessage = 'Error al buscar: $e';
+        if (e is AppException) {
+          _errorType = e.type;
+        } else {
+          _errorType = AppErrorType.unknown;
+        }
       });
     }
   }
@@ -82,10 +91,10 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               Row(
                 children: [
-                  //IconButton(
-                   // icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                   // onPressed: () => Navigator.of(context).pop(),
-                  //),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                    onPressed: () => context.pop(),
+                  ),
                   const SizedBox(width: 8),
                   const Text(
                     'Búsqueda',
@@ -116,13 +125,10 @@ class _SearchScreenState extends State<SearchScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_errorMessage != null) {
-      return Center(
-        child: Text(
-          _errorMessage!,
-          style: const TextStyle(color: AppColors.accent500),
-          textAlign: TextAlign.center,
-        ),
+    if (_errorType != null) {
+      return CrErrorState(
+        type: _errorType!,
+        onRetry: () => _performSearch(_lastQuery),
       );
     }
 

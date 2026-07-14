@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 //import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip2.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:go_router/go_router.dart';
 
 class FeaturedMovieCard extends StatelessWidget {
   final Movie movie;
@@ -9,11 +10,13 @@ class FeaturedMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
-      child: Stack(
-        fit: StackFit.expand, 
-        children: [
+    return GestureDetector(
+      onTap: () => context.push('/movie-detail', extra: movie),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
           
           Positioned.fill(
             child: Image.network(
@@ -90,7 +93,9 @@ class FeaturedMovieCard extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                            context.push('/movie-detail', extra: movie);
+                          },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -110,6 +115,7 @@ class FeaturedMovieCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -3,10 +3,10 @@ import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/category_selector.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/featured_movie_carousel.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
+import 'package:los_pibbles_movies_app/presentation/widgets/home_comments_section.dart';
 import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
-//import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -31,16 +31,10 @@ class HomeScreenBody extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (provider.errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(
-            provider.errorMessage!,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.white),
-          ),
-        ),
+    if (provider.errorType != null) {
+      return CrErrorState(
+        type: provider.errorType!,
+        onRetry: () => provider.loadMovies(),
       );
     }
 
@@ -100,12 +94,12 @@ class HomeScreenBody extends StatelessWidget {
           const SizedBox(height: 16),
           ...popular.take(10).map(
             (movie) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 0),
               child: MovieCardItem(movie: movie),
             ),
           ),
           //const SizedBox(height: 24),
-          const CommentSection(),
+          const HomeCommentsSection(),
         ],
       ),
     );

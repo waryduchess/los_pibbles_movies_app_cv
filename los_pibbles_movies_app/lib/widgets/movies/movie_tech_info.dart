@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 class MovieTechInfo extends StatelessWidget {
   final IconData icon;
@@ -15,18 +16,36 @@ class MovieTechInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 13),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF8B85FF), size: 20),
-          const SizedBox(width: 12),
-          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+          Icon(
+            icon,
+            color: AppColors.primary500,
+            size: 16,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
+          ),
           const Spacer(),
-          Text(value,
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold)),
+                color: AppColors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );

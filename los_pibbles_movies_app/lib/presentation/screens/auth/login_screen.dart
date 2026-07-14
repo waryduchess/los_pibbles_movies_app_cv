@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
+import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static const name = 'login--screen';
@@ -50,10 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['success'] == true) {
         SessionManager.setSession(
-          result['userId'],
+          int.parse(result['userId'].toString()),
           result['userName'],
           foto: result['fotoPerfil'],
         );
+        final favProvider = context.read<FavoritesProvider>();
+        await favProvider.loadFavoritesForUser(
+          int.parse(result['userId'].toString()),
+        );
+        if (!mounted) return;
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,9 +98,14 @@ class _LoginScreenState extends State<LoginScreen> {
         final userData = result['data'] as Map<String, dynamic>;
         
         SessionManager.setSession(
-          userData['userId'] ?? 'google_id_fallback', 
-          userData['userName'] ?? 'Usuario de Google'
+          int.parse((userData['userId'] ?? '0').toString()),
+          userData['userName'] ?? 'Usuario de Google',
         );
+        final favProvider = context.read<FavoritesProvider>();
+        await favProvider.loadFavoritesForUser(
+          int.parse((userData['userId'] ?? '0').toString()),
+        );
+        if (!mounted) return;
         context.go('/');
       } else {
         // Si el usuario cancela o hay un error controlado

@@ -1,5 +1,5 @@
 class SessionManager {
-  static String? userId;
+  static int? userId;
   static String? userName;
   static String? fotoPerfil;
   static DateTime? loginTime;
@@ -12,7 +12,7 @@ class SessionManager {
     return DateTime.now().difference(loginTime!).inMinutes >= 5;
   }
 
-  static void setSession(String id, String name, {String? foto}) {
+  static void setSession(int id, String name, {String? foto}) {
     userId = id;
     userName = name;
     fotoPerfil = foto;

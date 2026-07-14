@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/movie.dart'; 
-// 🚀 Importamos los colores oficiales de tu equipo
+import 'package:los_pibbles_movies_app/presentation/widgets/animated_favorite_button.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 class MovieCard extends StatelessWidget {
@@ -19,7 +19,6 @@ class MovieCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          // 🚀 Usamos el color de contenedor del equipo (secundario900 -> 0xFF1A1B2E)
           color: AppColors.secondary900,
           borderRadius: BorderRadius.circular(16),
         ),
@@ -59,13 +58,11 @@ class MovieCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      // 🚀 Corazón usando el color específico para favoritos o texto secundario
-                      const Icon(Icons.favorite_border, color: AppColors.textSecondary, size: 20),
+                      AnimatedFavoriteButton(movieId: movie.id, size: 24, movieTitle: movie.title),
                     ],
                   ),
                   const SizedBox(height: 4),
                   
-                  // Año de Lanzamiento (Se eliminó el error de sintaxis de la 'S')
                   Text(
                     movie.releaseDate != null ? movie.releaseDate!.year.toString() : '',
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
