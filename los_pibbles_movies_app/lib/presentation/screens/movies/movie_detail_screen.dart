@@ -74,173 +74,183 @@ Future<void> _openTrailer() async {
     return Scaffold(
       backgroundColor: AppColors.secondary1000,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(22, 14, 22, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _HeaderMovie(movie: movie),
+        child: RefreshIndicator(
+          color: AppColors.accent500,
+          backgroundColor: AppColors.secondary900,
+          onRefresh: () async {
+            await context.read<MoviesProvider>().loadMovieDetail(
+              movie.id,
+            );
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(22, 14, 22, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _HeaderMovie(movie: movie),
 
-              const SizedBox(height: 14),
+                const SizedBox(height: 14),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 46,
-                      child: ElevatedButton.icon(
-                        onPressed: _openTrailer,
-                        icon: const Icon(Icons.play_arrow, size: 18),
-                        label: const Text('Ver trailer'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary600,
-                          foregroundColor: AppColors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 46,
+                        child: ElevatedButton.icon(
+                          onPressed: _openTrailer,
+                          icon: const Icon(Icons.play_arrow, size: 18),
+                          label: const Text('Ver trailer'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary600,
+                            foregroundColor: AppColors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    width: 46,
-                    height: 46,
-                    decoration: BoxDecoration(
-                      color: AppColors.secondary900.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(14),
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary900.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Center(
+                        child: AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
+                      ),
                     ),
-                    child: Center(
-                      child: AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  _CircleActionButton(
-                    icon: Icons.share_outlined,
-                    color: AppColors.white,
-                    onTap: () {},
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              const Text(
-                'Resumen',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Text(
-                movie.overview.isNotEmpty
-                    ? movie.overview
-                    : 'No hay sinopsis disponible para esta película.',
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 13,
-                  height: 1.6,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.secondary900,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.secondary700),
-                ),
-                child: Column(
-                  children: [
-                    MovieTechInfo(
-                      icon: Icons.movie_creation_outlined,
-                      title: 'Director',
-                      value:
-                        provider.selectedMovieDetail?.director ??
-                        'Cargando...',
-                    ),
-                    MovieTechInfo(
-                      icon: Icons.access_time,
-                      title: 'Duración',
-                      value:
-                          provider.selectedMovieDetail != null
-                              ? '${provider.selectedMovieDetail!.runtime} min'
-                              : movie.duration,
-                    ),
-                    MovieTechInfo(
-                      icon: Icons.category_outlined,
-                      title: 'Género',
-                      value: movie.genres.isNotEmpty
-                          ? movie.genres.take(2).join(', ')
-                          : movie.subtitle,
+                    const SizedBox(width: 10),
+                    _CircleActionButton(
+                      icon: Icons.share_outlined,
+                      color: AppColors.white,
+                      onTap: () {},
                     ),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              const Text(
-                'Reparto',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                const Text(
+                  'Resumen',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 14),
+                const SizedBox(height: 10),
 
-              SizedBox(
-                height: 110,
-                child: provider.loadingMovieDetail
-                    ? const Center(
-                        child:
-                            CircularProgressIndicator(),
-                      )
-                    : ListView.builder(
-                        scrollDirection:
-                            Axis.horizontal,
-                        itemCount:
-                            provider
-                                .selectedMovieDetail
-                                ?.cast
-                                .length ??
-                            0,
-                        itemBuilder:
-                            (context, index) {
-                          final actor =
-                              provider
-                                  .selectedMovieDetail!
-                                  .cast[index];
+                Text(
+                  movie.overview.isNotEmpty
+                      ? movie.overview
+                      : 'No hay sinopsis disponible para esta película.',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                    height: 1.6,
+                  ),
+                ),
 
-                          return MovieActorCard(
-                            name: actor.name,
-                            role: actor.character,
-                            imageUrl:
-                                actor.imageUrl,
-                          );
-                        },
+                const SizedBox(height: 24),
+
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary900,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.secondary700),
+                  ),
+                  child: Column(
+                    children: [
+                      MovieTechInfo(
+                        icon: Icons.movie_creation_outlined,
+                        title: 'Director',
+                        value:
+                          provider.selectedMovieDetail?.director ??
+                          'Cargando...',
                       ),
-              ),
+                      MovieTechInfo(
+                        icon: Icons.access_time,
+                        title: 'Duración',
+                        value:
+                            provider.selectedMovieDetail != null
+                                ? '${provider.selectedMovieDetail!.runtime} min'
+                                : movie.duration,
+                      ),
+                      MovieTechInfo(
+                        icon: Icons.category_outlined,
+                        title: 'Género',
+                        value: movie.genres.isNotEmpty
+                            ? movie.genres.take(2).join(', ')
+                            : movie.subtitle,
+                      ),
+                    ],
+                  ),
+                ),
 
-              const SizedBox(height: 22),
+                const SizedBox(height: 24),
 
-              if (SessionManager.userId != null)
-                MovieCommentsSection(
-                  movieId: movie.id,
-                  userId: SessionManager.userId!,
-                )
-              else
-                MovieReviewsSection(movieId: movie.id),
-            ],
+                const Text(
+                  'Reparto',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                SizedBox(
+                  height: 110,
+                  child: provider.loadingMovieDetail
+                      ? const Center(
+                          child:
+                              CircularProgressIndicator(),
+                        )
+                      : ListView.builder(
+                          scrollDirection:
+                              Axis.horizontal,
+                          itemCount:
+                              provider
+                                  .selectedMovieDetail
+                                  ?.cast
+                                  .length ??
+                              0,
+                          itemBuilder:
+                              (context, index) {
+                            final actor =
+                                provider
+                                    .selectedMovieDetail!
+                                    .cast[index];
+
+                            return MovieActorCard(
+                              name: actor.name,
+                              role: actor.character,
+                              imageUrl:
+                                  actor.imageUrl,
+                            );
+                          },
+                        ),
+                ),
+
+                const SizedBox(height: 22),
+
+                if (SessionManager.userId != null)
+                  MovieCommentsSection(
+                    movieId: movie.id,
+                    userId: SessionManager.userId!,
+                  )
+                else
+                  MovieReviewsSection(movieId: movie.id),
+              ],
+            ),
           ),
         ),
       ),
