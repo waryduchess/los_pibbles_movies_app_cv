@@ -13,6 +13,6 @@ export 'search/search_screen.dart';
 export 'favorites/favorites_screen.dart';
 export 'settings/settings_screen.dart';
 export 'settings/terms_screen.dart';
-export './movies/movie_detail_screen.dart';
+export './details/movie_detail_screen.dart';
 
 

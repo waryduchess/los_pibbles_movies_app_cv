@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
+import 'package:los_pibbles_movies_app/domain/providers/comments_provider.dart';
+import 'package:los_pibbles_movies_app/widgets/comments/comment_section.dart';
 import 'package:provider/provider.dart';
 
 class HomeCommentsSection extends StatefulWidget {

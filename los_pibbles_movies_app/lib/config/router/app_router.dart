@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
-import 'package:los_pibbles_movies_app/presentation/screens/movies/movie_detail_screen.dart';
+import 'package:los_pibbles_movies_app/presentation/screens/details/movie_detail_screen.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/main_shell.dart';
+import 'package:los_pibbles_movies_app/presentation/screens/main_shell/main_shell.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',

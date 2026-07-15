@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
+import 'package:los_pibbles_movies_app/domain/providers/favorites_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:provider/provider.dart';
 

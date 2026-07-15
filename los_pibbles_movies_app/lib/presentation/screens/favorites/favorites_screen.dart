@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
+import 'package:los_pibbles_movies_app/domain/providers/favorites_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:provider/provider.dart';
-
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 class FavoritesScreen extends StatefulWidget {
   static const name = 'favorites--screen';
 

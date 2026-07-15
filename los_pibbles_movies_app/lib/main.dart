@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/config/router/app_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
+import 'package:los_pibbles_movies_app/domain/providers/favorites_provider.dart';
+import 'package:los_pibbles_movies_app/domain/providers/comments_provider.dart';
+import 'package:los_pibbles_movies_app/domain/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'config/db/db_connection.dart';
+import 'domain/infrastructure/db_connection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

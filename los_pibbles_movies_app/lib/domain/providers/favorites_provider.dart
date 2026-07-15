@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
+import 'package:los_pibbles_movies_app/domain/infrastructure/db_connection.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   final Set<int> _favoriteMovieIds = {}; // Cambiado a int para coincidir con tu MySQL (id_pelicula)

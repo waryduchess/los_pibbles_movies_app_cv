@@ -4,15 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:los_pibbles_movies_app/domain/services/profile_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
+import 'package:los_pibbles_movies_app/domain/providers/comments_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:provider/provider.dart';
-import 'package:los_pibbles_movies_app/widgets/settings/biometric_card_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/settings/menu_card_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/settings/profile_card_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/settings/section_label_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/logout_button_widget.dart';
-import 'package:los_pibbles_movies_app/widgets/dialogs/show_logout_dialog.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   static const name = 'settings--screen';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip.dart';
+import 'package:los_pibbles_movies_app/widgets/chips/tag_chip.dart';
 
 class CategorySelector extends StatelessWidget {
   final List<String> categories;

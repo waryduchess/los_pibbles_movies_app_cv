@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/services/auth_service.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/favorites_provider.dart';
+import 'package:los_pibbles_movies_app/domain/providers/favorites_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
 import 'package:provider/provider.dart';

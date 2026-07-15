@@ -1,14 +1,12 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/movie_card_item.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/search_bar_widget.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
+
 
 class SearchScreen extends StatefulWidget {
   static const name = 'search--screen';

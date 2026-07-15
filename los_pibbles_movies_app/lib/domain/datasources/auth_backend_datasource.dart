@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:los_pibbles_movies_app/config/db/db_connection.dart';
+import 'package:los_pibbles_movies_app/domain/infrastructure/db_connection.dart';
 
 class AuthBackendDatasource {
 

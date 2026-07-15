@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/datasources/auth_backend_datasource.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/comment_section.dart';
+import 'package:los_pibbles_movies_app/widgets/index.dart';
 
 class CommentData {
   final int id;

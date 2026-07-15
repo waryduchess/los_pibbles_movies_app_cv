@@ -1,5 +1,4 @@
-import 'package:los_pibbles_movies_app/presentation/providers/movies_provider.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/animated_favorite_button.dart';
+import 'package:los_pibbles_movies_app/domain/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';

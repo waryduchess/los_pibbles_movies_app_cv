@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:los_pibbles_movies_app/presentation/providers/comments_provider.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/add_comment_sheet.dart';
+import 'package:los_pibbles_movies_app/domain/providers/comments_provider.dart';
+import 'package:los_pibbles_movies_app/widgets/comments/add_comment_sheet.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/cards/movie_review_card.dart';
 import 'package:provider/provider.dart';

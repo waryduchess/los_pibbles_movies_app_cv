@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/animated_favorite_button.dart';
-import 'package:los_pibbles_movies_app/presentation/widgets/tag_chip2.dart';
+import 'package:los_pibbles_movies_app/widgets/buttons/animated_favorite_button.dart';
+import 'package:los_pibbles_movies_app/widgets/chips/tag_chip2.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 
 
