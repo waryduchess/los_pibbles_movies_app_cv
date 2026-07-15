@@ -28,13 +28,17 @@ class HomeScreenBody extends StatelessWidget {
     final provider = context.watch<MoviesProvider>();
 
     if (provider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.accent500,
+        ),
+      );
     }
 
     if (provider.errorType != null) {
       return CrErrorState(
         type: provider.errorType!,
-        onRetry: () => provider.loadMovies(),
+        onRetry: provider.loadMovies,
       );
     }
 
@@ -56,99 +60,108 @@ class HomeScreenBody extends StatelessWidget {
     String selectedCategory,
     ValueChanged<String> onSelectCategory,
   ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 12),
-          //const SearchBarWidget(),
-          _buildSectionTitle(context),
-          const SizedBox(height: 18),
-          FeaturedMovieCarousel(movies: trending.take(6).toList()),
-          const SizedBox(height: 24),
-          const Text(
-            'Géneros',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+    return RefreshIndicator(
+      color: AppColors.accent500,
+      backgroundColor: AppColors.secondary900,
+      onRefresh: () async {
+        await context.read<MoviesProvider>().loadMovies();
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+
+            const SizedBox(height: 12),
+
+            _buildSectionTitle(),
+
+            const SizedBox(height: 18),
+
+            FeaturedMovieCarousel(
+              movies: trending.take(6).toList(),
             ),
-          ),
-          const SizedBox(height: 14),
-          CategorySelector(
-            categories: categories,
-            selectedCategory: selectedCategory,
-            onSelected: onSelectCategory,
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Recomendadas',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+
+            const SizedBox(height: 24),
+
+            const Text(
+              'Géneros',
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          ...popular.take(10).map(
-            (movie) => Padding(
-              padding: const EdgeInsets.only(bottom: 0),
-              child: MovieCardItem(movie: movie),
+
+
+            const SizedBox(height: 14),
+
+            CategorySelector(
+              categories: categories,
+              selectedCategory: selectedCategory,
+              onSelected: onSelectCategory,
             ),
-          ),
-          //const SizedBox(height: 24),
-          const HomeCommentsSection(),
-        ],
+
+            const SizedBox(height: 24),
+
+            const Text(
+              'Recomendadas',
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            ...popular.take(10).map(
+              (movie) => MovieCardItem(
+                movie: movie,
+              ),
+            ),
+
+            const HomeCommentsSection(),
+
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
 
-  // Los métodos _buildHeader y _buildSectionTitle se mantienen igual que antes
-
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Image.asset(
-              'lib/resources/images/logo.png',
-              width: 32,
-              height: 32,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Pibble Movies',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        Image.asset(
+          'lib/resources/images/logo.png',
+          width: 32,
+          height: 32,
+          fit: BoxFit.contain,
         ),
-       
+        const SizedBox(width: 10),
+        const Text(
+          'Pibble Movies',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        Text(
-          'Tendencias',
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        
-      ],
+  Widget _buildSectionTitle() {
+    return const Text(
+      'Tendencias',
+      style: TextStyle(
+        color: AppColors.white,
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 }
-
