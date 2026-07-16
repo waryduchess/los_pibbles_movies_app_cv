@@ -36,6 +36,9 @@ export 'settings/section_label_widget.dart';
 // Dialogs - Diálogos
 export 'dialogs/logout_dialog.dart';
 export 'dialogs/show_logout_dialog.dart';
+export 'dialogs/change_email_dialog.dart';
+export 'dialogs/change_name_dialog.dart';
+export 'dialogs/change_password_dialog.dart';
 
 // Widgets base y utilitarios en la raíz de widgets/
 export 'buttons/back_button_widget.dart';

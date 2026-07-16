@@ -3,6 +3,10 @@ class SessionManager {
   static String? userName;
   static String? fotoPerfil;
   static DateTime? loginTime;
+  static String? userEmail; 
+  
+  static String? memberSince;
+  static int? favoritesCount;
 
   static bool get isLoggedIn =>
       userId != null && loginTime != null && !isExpired;
@@ -12,10 +16,21 @@ class SessionManager {
     return DateTime.now().difference(loginTime!).inMinutes >= 5;
   }
 
-  static void setSession(int id, String name, {String? foto}) {
+  // 👇 Actualizamos el método para recibir y guardar los nuevos datos
+  static void setSession(
+    int id, 
+    String name, {
+    String? foto, 
+    String? email,
+    String? memberSinceDate, // 👈 Nuevo
+    int? favCount,           // 👈 Nuevo
+  }) {
     userId = id;
     userName = name;
     fotoPerfil = foto;
+    userEmail = email;
+    memberSince = memberSinceDate; // 👈 Guardamos el dato
+    favoritesCount = favCount;     // 👈 Guardamos el dato
     loginTime = DateTime.now();
   }
 
@@ -23,6 +38,9 @@ class SessionManager {
     userId = null;
     userName = null;
     fotoPerfil = null;
+    userEmail = null;
     loginTime = null;
+    memberSince = null;
+    favoritesCount = null;
   }
 }
