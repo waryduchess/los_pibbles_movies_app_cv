@@ -72,13 +72,13 @@ class CommentSection extends StatelessWidget {
           style: TextStyle(
             color: AppColors.white,
             fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         ...comments.map(
           (comment) => Padding(
-            padding: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.only(bottom: 12),
             child: _CommentCard(comment: comment),
           ),
         ),
@@ -95,7 +95,7 @@ class _CommentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.secondary900,
         borderRadius: BorderRadius.circular(16),
@@ -133,7 +133,7 @@ class _CommentCard extends StatelessWidget {
                         count: comment.likeCount!,
                         isLiked: comment.isLiked ?? false,
                       ),
-                    const SizedBox(width: 6),
+                    //const SizedBox(width: 6),
                     ...List.generate(
                       5,
                       (i) => Icon(
@@ -146,7 +146,7 @@ class _CommentCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                //const SizedBox(height: 6),
                 Text(
                   comment.text,
                   style: TextStyle(
@@ -179,7 +179,7 @@ class _LikeBadge extends StatelessWidget {
           color: isLiked ? AppColors.accent500 : AppColors.textSecondary,
           size: 14,
         ),
-        const SizedBox(width: 3),
+        //const SizedBox(width: 3),
         Text(
           '$count',
           style: TextStyle(

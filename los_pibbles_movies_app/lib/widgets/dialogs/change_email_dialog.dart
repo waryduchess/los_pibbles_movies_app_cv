@@ -103,7 +103,7 @@ class _ChangeEmailDialogState extends State<ChangeEmailDialog> {
           child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary500),
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.accent700),
           onPressed: isLoading ? null : _submit,
           child: isLoading 
             ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
