@@ -14,6 +14,70 @@ class AuthBackendDatasource {
     return sha256.convert(bytes).toString(); // Retorna Hash SHA-256 nativo
   }
 
+  // 👇 1. ESTE ES EL NUEVO MÉTODO DE LOGIN QUE FALTABA 👇
+  /// Inicia sesión y devuelve todos los datos del usuario, incluyendo favoritos
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final conn = await DBConnection.getConnection();
+    try {
+      // Pedimos todos los campos de la tabla usuarios (ajusta los nombres de columnas si son diferentes)
+      final result = await conn.execute(
+        "SELECT id_usuario, nombres, apellidos, foto_perfil, correo, fecha_registro, password "
+        "FROM usuarios WHERE correo = :correo",
+        {"correo": email},
+      );
+
+      if (result.rows.isEmpty) {
+        throw Exception('Usuario no encontrado.');
+      }
+
+      final userRow = result.rows.first.assoc();
+      final savedPassword = userRow['password']?.toString() ?? '';
+      
+      // Validamos la contraseña
+      if (savedPassword != _processPassword(password)) {
+        throw Exception('Contraseña incorrecta.');
+      }
+
+      final userId = int.parse(userRow['id_usuario'].toString());
+
+      // Contamos los favoritos (si tienes la tabla 'favoritos')
+      int favCount = 0;
+      try {
+        final favResult = await conn.execute(
+          "SELECT COUNT(*) AS total FROM favoritos WHERE id_usuario = :id",
+          {"id": userId},
+        );
+        if (favResult.rows.isNotEmpty) {
+          favCount = int.tryParse(favResult.rows.first.assoc()['total'].toString()) ?? 0;
+        }
+      } catch (_) {
+        // Si no tienes tabla de favoritos aún o se llama diferente, 
+        // silenciamos el error para no arruinar el login
+      }
+
+      // Devolvemos el mapa que tu Auth_Service y LoginScreen están esperando
+      return {
+        "success": true,
+        "userId": userId,
+        "userName": "${userRow['nombres']} ${userRow['apellidos']}".trim(),
+        "fotoPerfil": userRow['foto_perfil'],
+        "userEmail": userRow['correo'],
+        "memberSince": userRow['fecha_registro']?.toString(), 
+        "favoritesCount": favCount,
+      };
+
+    } catch (e) {
+      return {
+        "success": false,
+        "error": e.toString().replaceAll('Exception: ', ''),
+      };
+    } finally {
+      await conn.close();
+    }
+  }
+  // 👆 FIN DEL NUEVO MÉTODO DE LOGIN 👆
+
+
   /// 1. Verifica si el correo existe en la tabla de MySQL de tu equipo
   Future<bool> checkEmailExists(String email) async {
     final conn = await DBConnection.getConnection();
@@ -47,7 +111,6 @@ class AuthBackendDatasource {
       await conn.close();
     }
   }
-  // ... Dentro de tu clase AuthBackendDatasource ...
 
   /// Actualiza la foto de perfil del usuario en MySQL
   Future<void> updateProfilePhoto(int userId, String photoUrl) async {
@@ -221,4 +284,90 @@ class AuthBackendDatasource {
       await conn.close();
     }
   }
+
+  /// 4. Actualizar Nombre y Apellido
+  Future<void> updateNameAndSurname(int userId, String nombres, String apellidos) async {
+    final conn = await DBConnection.getConnection();
+    try {
+      await conn.execute(
+        "UPDATE usuarios SET nombres = :nombres, apellidos = :apellidos WHERE id_usuario = :id_usuario",
+        {
+          "nombres": nombres,
+          "apellidos": apellidos,
+          "id_usuario": userId,
+        },
+      );
+    } catch (e) {
+      throw Exception('Error al actualizar los datos en la base de datos.');
+    } finally {
+      await conn.close();
+    }
+  }
+
+  /// 5. Actualizar Correo Electrónico
+  Future<void> updateEmail(int userId, String nuevoCorreo) async {
+    final conn = await DBConnection.getConnection();
+    try {
+      // Primero verificamos si el correo ya está siendo usado por OTRA persona
+      final check = await conn.execute(
+        "SELECT id_usuario FROM usuarios WHERE correo = :correo AND id_usuario != :id_usuario",
+        {"correo": nuevoCorreo, "id_usuario": userId},
+      );
+      
+      if (check.rows.isNotEmpty) {
+        throw Exception('Este correo electrónico ya está en uso por otra cuenta.');
+      }
+
+      await conn.execute(
+        "UPDATE usuarios SET correo = :correo WHERE id_usuario = :id_usuario",
+        {
+          "correo": nuevoCorreo,
+          "id_usuario": userId,
+        },
+      );
+    } catch (e) {
+      throw Exception(e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      await conn.close();
+    }
+  }
+
+  /// 3. Cambia la contraseña validando primero la actual
+  Future<void> changePasswordWithValidation(int userId, String currentPassword, String newPassword) async {
+    final conn = await DBConnection.getConnection();
+    try {
+      // 1. Obtener la contraseña actual guardada en MySQL
+      final result = await conn.execute(
+        "SELECT password FROM usuarios WHERE id_usuario = :id_usuario",
+        {"id_usuario": userId},
+      );
+
+      if (result.rows.isEmpty) {
+        throw Exception('Usuario no encontrado.');
+      }
+
+      final savedPassword = result.rows.first.assoc()['password']?.toString() ?? '';
+      
+      // 2. Procesar la contraseña actual ingresada para compararla
+      final hashedCurrentInput = _processPassword(currentPassword);
+
+      if (savedPassword != hashedCurrentInput) {
+        throw Exception('La contraseña actual es incorrecta.');
+      }
+
+      // 3. Si coincide, actualizar con la nueva contraseña
+      await conn.execute(
+        "UPDATE usuarios SET password = :new_password WHERE id_usuario = :id_usuario",
+        {
+          "new_password": _processPassword(newPassword),
+          "id_usuario": userId,
+        },
+      );
+    } catch (e) {
+      throw Exception(e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      await conn.close();
+    }
+  }
+
 }

@@ -7,6 +7,9 @@ class CloudinaryService {
   static String get _uploadPreset => dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '';
 
   static Future<String> uploadImage(File imageFile) async {
+    print('--- CLOUDINARY DEBUG ---');
+    print('Cloud Name en la app: $_cloudName');
+    print('Preset en la app: $_uploadPreset');
     final uri = Uri.parse(
       'https://api.cloudinary.com/v1_1/$_cloudName/image/upload',
     );

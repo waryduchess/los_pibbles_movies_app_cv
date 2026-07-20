@@ -121,7 +121,7 @@ class HomeScreenBody extends StatelessWidget {
 
             const HomeCommentsSection(),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 5),
           ],
         ),
       ),

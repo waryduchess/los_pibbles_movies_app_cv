@@ -1,20 +1,16 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // 📌 No olvides importar dotenv
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:los_pibbles_movies_app/domain/infrastructure/db_connection.dart';
 
 class AuthService {
-  // 📌 Configuración de Google Sign-In (V7 CORRECTA)
   static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   static bool _isGoogleInitialized = false;
 
-  // 📌 AQUÍ ESTÁ LA SOLUCIÓN: Pasarle el Client ID al inicializar
   static Future<void> _initGoogle() async {
     if (!_isGoogleInitialized) {
       await _googleSignIn.initialize(
-        // 👇 Esto soluciona la pantalla roja de Android que decía: 
-        // "serverClientId must be provided on Android"
         serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
       );
       _isGoogleInitialized = true;
@@ -34,8 +30,19 @@ class AuthService {
   ) async {
     final conn = await DBConnection.getConnection();
     try {
+      // 👇 1. Agregamos correo, fecha_registro y el conteo de favoritos al SELECT
       final results = await conn.execute(
-        'SELECT id_usuario, nombres, apellidos, foto_perfil, password FROM usuarios WHERE correo = :correo',
+        '''SELECT 
+             id_usuario, 
+             nombres, 
+             apellidos, 
+             correo,
+             foto_perfil, 
+             password, 
+             fecha_registro,
+             (SELECT COUNT(*) FROM favoritos WHERE id_usuario = usuarios.id_usuario) AS total_favoritos
+           FROM usuarios 
+           WHERE correo = :correo''',
         {'correo': correo},
       );
 
@@ -51,11 +58,15 @@ class AuthService {
         return {'success': false, 'error': 'Correo o contraseña incorrectos'};
       }
 
+      // 👇 2. Retornamos los nuevos datos
       return {
         'success': true,
         'userId': user['id_usuario']!,
         'userName': user['nombres']!,
         'fotoPerfil': user['foto_perfil'],
+        'userEmail': user['correo']!, 
+        'memberSince': user['fecha_registro'].toString(), // Convertimos a String por seguridad
+        'favoritesCount': user['total_favoritos'] ?? 0,
       };
     } finally {
       await conn.close();
@@ -101,10 +112,8 @@ class AuthService {
   // 📌 INICIO DE SESIÓN Y REGISTRO CON GOOGLE (V7)
   static Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
-      // 1. Ejecutar la inicialización obligatoria
       await _initGoogle();
 
-      // 2. Método 'authenticate()' correcto para la V7
       final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
 
       if (googleUser == null) {
@@ -120,8 +129,17 @@ class AuthService {
 
       final conn = await DBConnection.getConnection();
       try {
+        // 👇 3. Agregamos los mismos campos al SELECT de Google
         final results = await conn.execute(
-          'SELECT id_usuario, nombres, foto_perfil FROM usuarios WHERE correo = :correo',
+          '''SELECT 
+               id_usuario, 
+               nombres, 
+               correo,
+               foto_perfil,
+               fecha_registro,
+               (SELECT COUNT(*) FROM favoritos WHERE id_usuario = usuarios.id_usuario) AS total_favoritos
+             FROM usuarios 
+             WHERE correo = :correo''',
           {'correo': email},
         );
 
@@ -133,6 +151,9 @@ class AuthService {
               'userId': user['id_usuario']!,
               'userName': user['nombres']!,
               'fotoPerfil': user['foto_perfil'],
+              'userEmail': user['correo']!, 
+              'memberSince': user['fecha_registro'].toString(),
+              'favoritesCount': user['total_favoritos'] ?? 0,
             }
           };
         } else {
@@ -148,8 +169,9 @@ class AuthService {
             },
           );
 
+          // 👇 4. Consultamos el usuario recién creado para devolver sus datos completos
           final newUserResults = await conn.execute(
-            'SELECT id_usuario, foto_perfil FROM usuarios WHERE correo = :correo',
+            'SELECT id_usuario, correo, foto_perfil, fecha_registro FROM usuarios WHERE correo = :correo',
             {'correo': email},
           );
           
@@ -161,6 +183,9 @@ class AuthService {
               'userId': newUser['id_usuario']!,
               'userName': nombres,
               'fotoPerfil': newUser['foto_perfil'],
+              'userEmail': newUser['correo']!, 
+              'memberSince': newUser['fecha_registro'].toString(),
+              'favoritesCount': 0, // Si es nuevo, tiene 0 favoritos
             }
           };
         }

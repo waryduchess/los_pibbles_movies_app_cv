@@ -26,6 +26,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String? get _fotoPerfil => SessionManager.fotoPerfil;
   String? get _userName => SessionManager.userName;
+  String? get _userEmail => SessionManager.userEmail ;
+  String? get _memberSince => SessionManager.memberSince;
+  int get _favoritesCount => SessionManager.favoritesCount ?? 0;
 
   void _viewPhotoFullScreen() {
     final foto = _fotoPerfil;
@@ -92,8 +95,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
+    // 📌 Formateamos la fecha para que solo muestre el día y no la hora completa
+    String formattedDate = 'Fecha desconocida';
+    if (_memberSince != null) {
+      formattedDate = 'Miembro desde ${_memberSince!.split(' ')[0]}';
+    }
+
     return Scaffold(
       backgroundColor: AppColors.secondary1000,
       body: SafeArea(
@@ -106,10 +116,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     ProfileCardWidget(
-                      userName: _userName ?? 'Isabel Zacarias',
-                      email: 'isabel@gmail.com',
-                      memberSince: 'Miembro desde mar. 2024',
-                      favoritesCount: '0',
+                      userName: _userName ?? 'Usuario',
+                      email: _userEmail ?? 'Sin correo registrado',
+                      memberSince: formattedDate,
+                      favoritesCount: _favoritesCount.toString(),
                       isUploading: _isUploading,
                       fotoPerfil: _fotoPerfil,
                       onPhotoTap: _viewPhotoFullScreen,
@@ -124,19 +134,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconColor: AppColors.primary500,
                         title: 'Correo electrónico',
                         subtitle: null,
-                        onTap: () {},
+                        // 👇 1. Agregamos async y setState para que recargue al cambiar el correo
+                        onTap: () async {
+                          final success = await showDialog<bool>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const ChangeEmailDialog(),
+                          );
+                          // Si el diálogo devuelve true (se guardó con éxito), recargamos la pantalla
+                          if (success == true) {
+                            setState(() {}); 
+                          }
+                        },
                       ),
                       MenuItemData(
                         icon: Icons.lock_outline,
                         iconColor: Colors.greenAccent,
                         title: 'Cambiar contraseña',
-                        onTap: () {},
+                        onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => const ChangePasswordDialog(),
+                            );
+                          },
                       ),
                       MenuItemData(
                         icon: Icons.edit_outlined,
                         iconColor: AppColors.primary500,
                         title: 'Cambiar nombre y apellido',
-                        onTap: () {},
+                        // 👇 2. Agregamos async y setState para que recargue al cambiar el nombre
+                        onTap: () async {
+                          final success = await showDialog<bool>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const ChangeNameDialog(),
+                          );
+                          // Si el diálogo devuelve true, recargamos la pantalla
+                          if (success == true) {
+                            setState(() {});
+                          }
+                        },
                       ),
                     ]),
                     const SizedBox(height: 20),
@@ -153,16 +191,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(height: 8),
                     MenuCardWidget(items: [
                       MenuItemData(
-                        icon: Icons.chat_bubble_outline,
-                        iconColor: AppColors.error,
-                        title: 'Enviar comentarios',
-                        onTap: () {},
-                      ),
-                      MenuItemData(
                         icon: Icons.description_outlined,
                         iconColor: Colors.grey,
                         title: 'Términos y privacidad',
-                        onTap: () {},
+                        onTap: () {
+                          context.push('/terms');
+                        },
                       ),
                     ]),
                     const SizedBox(height: 28),
@@ -186,14 +220,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildTopBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
-          const SizedBox(height: 8),
-          const Row(
+          SizedBox(height: 8),
+          Row(
             children: [
               SizedBox(width: 8),
               Text(
@@ -210,5 +243,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-
 }

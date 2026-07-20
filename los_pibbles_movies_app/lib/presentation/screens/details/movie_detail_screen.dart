@@ -123,12 +123,6 @@ Future<void> _openTrailer() async {
                         child: AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    _CircleActionButton(
-                      icon: Icons.share_outlined,
-                      color: AppColors.white,
-                      onTap: () {},
-                    ),
                   ],
                 ),
 
@@ -264,6 +258,14 @@ class _HeaderMovie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 📌 1. Escuchamos al provider para saber cuando se cargue el detalle de la película
+    final provider = context.watch<MoviesProvider>();
+    
+    // 📌 2. Evaluamos: si ya cargó el detalle, usamos el 'runtime', si no, el 'duration' por defecto
+    final displayDuration = provider.selectedMovieDetail != null
+        ? '${provider.selectedMovieDetail!.runtime} min'
+        : movie.duration.isNotEmpty ? movie.duration : '...'; // Ponemos '...' mientras carga
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: SizedBox(
@@ -340,13 +342,16 @@ class _HeaderMovie extends StatelessWidget {
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
                       const SizedBox(width: 10),
+                      
+                      // 📌 3. Aquí inyectamos nuestra variable calculada
                       Text(
-                        movie.duration,
+                        displayDuration, 
                         style: const TextStyle(
                           color: AppColors.white,
                           fontSize: 12,
                         ),
                       ),
+                      
                       const SizedBox(width: 10),
                       const Text(
                         '•',

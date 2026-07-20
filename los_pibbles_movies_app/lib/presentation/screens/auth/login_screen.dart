@@ -38,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   /// Maneja el inicio de sesión estándar con correo y contraseña
+ /// Maneja el inicio de sesión estándar con correo y contraseña
   Future<void> _handleLogin() async {
     setState(() => _isLoading = true);
 
@@ -51,11 +52,16 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
 
       if (result['success'] == true) {
+        // 👇 AQUÍ AGREGAMOS LOS DATOS FALTANTES 👇
         SessionManager.setSession(
           int.parse(result['userId'].toString()),
           result['userName'],
           foto: result['fotoPerfil'],
+          email: result['userEmail'], // Nuevo
+          memberSinceDate: result['memberSince'], // Nuevo
+          favCount: int.parse((result['favoritesCount'] ?? 0).toString()), // Nuevo
         );
+
         final favProvider = context.read<FavoritesProvider>();
         await favProvider.loadFavoritesForUser(
           int.parse(result['userId'].toString()),
@@ -83,24 +89,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   /// Maneja el inicio de sesión con Google (Actualizado para V7)
+ /// Maneja el inicio de sesión con Google (Actualizado para V7)
   Future<void> _handleGoogleLogin() async {
     setState(() => _isGoogleLoading = true);
 
     try {
-      // 📌 Llamamos al nuevo método V7 que maneja authenticate()
       final result = await AuthService.loginWithGoogle();
 
       if (!mounted) return;
       setState(() => _isGoogleLoading = false);
 
       if (result['success'] == true) {
-        // 📌 Usamos la estructura de datos que definimos en Turn 5: result['data']
         final userData = result['data'] as Map<String, dynamic>;
         
+        // 👇 AQUÍ AGREGAMOS LOS DATOS FALTANTES 👇
         SessionManager.setSession(
           int.parse((userData['userId'] ?? '0').toString()),
           userData['userName'] ?? 'Usuario de Google',
+          foto: userData['fotoPerfil'], // Nuevo
+          email: userData['userEmail'], // Nuevo
+          memberSinceDate: userData['memberSince'], // Nuevo
+          favCount: int.parse((userData['favoritesCount'] ?? 0).toString()), // Nuevo
         );
+
         final favProvider = context.read<FavoritesProvider>();
         await favProvider.loadFavoritesForUser(
           int.parse((userData['userId'] ?? '0').toString()),
@@ -108,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         context.go('/');
       } else {
-        // Si el usuario cancela o hay un error controlado
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result['error']), 
@@ -127,7 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
-
   @override
   void dispose() {
     _emailController.dispose();

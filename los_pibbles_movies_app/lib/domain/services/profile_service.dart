@@ -19,4 +19,43 @@ class ProfileService {
     await AuthService.logoutGoogle();
     SessionManager.clear();
   }
+  
+  // 📌 1. Cambiar Contraseña
+  static Future<void> changePassword({
+    required int userId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final datasource = AuthBackendDatasource();
+    await datasource.changePasswordWithValidation(
+      userId, 
+      currentPassword, 
+      newPassword,
+    );
+  }
+
+  // 📌 2. Cambiar Nombre y Apellidos
+  static Future<void> changeNameAndSurname({
+    required int userId,
+    required String nombres,
+    required String apellidos,
+  }) async {
+    final datasource = AuthBackendDatasource();
+    await datasource.updateNameAndSurname(userId, nombres, apellidos);
+    
+    // Actualizamos la sesión local para que la UI se refresque de inmediato
+    SessionManager.userName = '$nombres $apellidos';
+  }
+
+  // 📌 3. Cambiar Correo Electrónico
+  static Future<void> changeEmail({
+    required int userId,
+    required String newEmail,
+  }) async {
+    final datasource = AuthBackendDatasource();
+    await datasource.updateEmail(userId, newEmail);
+    
+    // Si tienes guardado el correo en tu SessionManager, descomenta la siguiente línea:
+    // SessionManager.userEmail = newEmail;
+  }
 }

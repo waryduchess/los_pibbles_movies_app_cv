@@ -78,7 +78,7 @@ class CommentSection extends StatelessWidget {
         const SizedBox(height: 14),
         ...comments.map(
           (comment) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 14),
             child: _CommentCard(comment: comment),
           ),
         ),
