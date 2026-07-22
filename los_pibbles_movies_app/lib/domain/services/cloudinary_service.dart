@@ -10,8 +10,17 @@ class CloudinaryService {
     print('--- CLOUDINARY DEBUG ---');
     print('Cloud Name en la app: $_cloudName');
     print('Preset en la app: $_uploadPreset');
+
+    // 👇 1. Detectamos dinámicamente si el archivo es un video por su extensión
+    final isVideo = imageFile.path.toLowerCase().endsWith('.mp4') || 
+                    imageFile.path.toLowerCase().endsWith('.mov');
+    
+    // Si es video usamos 'video', de lo contrario usamos 'image'
+    final resourceType = isVideo ? 'video' : 'image';
+
+    // 👇 2. Cambiamos la palabra fija "image" por la variable dinámina "$resourceType"
     final uri = Uri.parse(
-      'https://api.cloudinary.com/v1_1/$_cloudName/image/upload',
+      'https://api.cloudinary.com/v1_1/$_cloudName/$resourceType/upload',
     );
 
     final request = http.MultipartRequest('POST', uri)
@@ -26,7 +35,8 @@ class CloudinaryService {
       final secureUrl = _extractSecureUrl(data);
       return secureUrl;
     } else {
-      throw Exception('Error al subir imagen a Cloudinary: ${response.statusCode}');
+      // 🔥 Tip Pro: Devolvemos response.body para saber el motivo real si algo falla (ej. tamaño del archivo)
+      throw Exception('Error al subir a Cloudinary (${response.statusCode}): ${response.body}');
     }
   }
 

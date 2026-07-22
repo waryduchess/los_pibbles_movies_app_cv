@@ -6,6 +6,7 @@ import 'package:los_pibbles_movies_app/domain/providers/favorites_provider.dart'
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
+
 class FavoritesScreen extends StatefulWidget {
   static const name = 'favorites--screen';
 
@@ -66,9 +67,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   void _syncWithProvider() {
     final provider = context.read<FavoritesProvider>();
-    final newIds = provider.favoriteMovieIds;
+    final newIds = provider.favoriteMovieIds.toSet();
 
-    if (newIds.toSet().hashCode == _cachedFavoriteIds.hashCode) return;
+    if (newIds.hashCode == _cachedFavoriteIds.hashCode) return;
 
     final removed = _cachedFavoriteIds.difference(newIds);
     final added = newIds.difference(_cachedFavoriteIds);
@@ -122,29 +123,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       );
     }
 
-    if (provider.favoriteMovieIds.isEmpty) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.favorite_border, color: AppColors.textSecondary, size: 64),
-              const SizedBox(height: 16),
-              Text(
-                'No tienes películas favoritas',
-                style: TextStyle(color: AppColors.white.withValues(alpha: 0.7), fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Toca el corazón en cualquier película para agregarla',
-                style: TextStyle(color: AppColors.white.withValues(alpha: 0.45), fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
+    // 🔥 Ahora siempre devolvemos el Scaffold principal con el título
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -152,14 +131,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                    onPressed: () => context.pop(),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Mis Favoritos',
                     style: TextStyle(
                       color: AppColors.white,
@@ -170,7 +144,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-              Expanded(child: _buildBody()),
+              // Pasamos el provider a _buildBody para que maneje el estado vacío
+              Expanded(child: _buildBody(provider)), 
             ],
           ),
         ),
@@ -178,11 +153,36 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  Widget _buildBody() {
+  // Recibe el provider para saber si hay películas o no
+  Widget _buildBody(FavoritesProvider provider) {
+    // 1. Estado: No hay favoritos
+    if (provider.favoriteMovieIds.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.favorite_border, color: AppColors.textSecondary, size: 64),
+            const SizedBox(height: 16),
+            Text(
+              'No tienes películas favoritas',
+              style: TextStyle(color: AppColors.white.withValues(alpha: 0.7), fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Toca el corazón en cualquier película para agregarla',
+              style: TextStyle(color: AppColors.white.withValues(alpha: 0.45), fontSize: 13),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // 2. Estado: Cargando películas
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
+    // 3. Estado: Error al cargar
     if (_errorMessage != null) {
       return Center(
         child: Column(
@@ -199,6 +199,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       );
     }
 
+    // 4. Estado: Mostrar lista de películas
     return ListView.builder(
       itemCount: _movies.length,
       itemBuilder: (context, index) => MovieCardItem(movie: _movies[index]),
