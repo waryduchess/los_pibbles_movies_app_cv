@@ -165,11 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           iconColor: AppColors.primary500,
                           title: 'Correo electrónico',
                           onTap: () async {
-                            final success = await showDialog<bool>(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => const ChangeEmailDialog(),
-                            );
+                            final success = await context.push<bool>('/change-email');
                             if (success == true) setState(() {});
                           },
                         ),

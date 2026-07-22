@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
+import 'package:los_pibbles_movies_app/presentation/screens/settings/change_email_screen.dart';
 
 
 final appRouter = GoRouter(
@@ -52,6 +53,11 @@ final appRouter = GoRouter(
         final movie = state.extra as Movie;
         return MovieDetailScreen(movie: movie);
       },
+    ),
+
+    GoRoute(
+      path: '/change-email',
+      builder: (context, state) => const ChangeEmailScreen(),
     ),
   ],
 );
