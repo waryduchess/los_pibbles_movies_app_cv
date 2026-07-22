@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:los_pibbles_movies_app/domain/providers/movies_provider.dart';
 import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,64 +12,45 @@ import 'package:provider/provider.dart';
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
 
-  const MovieDetailScreen({
-    super.key,
-    required this.movie,
-  });
+  const MovieDetailScreen({super.key, required this.movie});
 
   @override
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() {
-      context.read<MoviesProvider>().loadMovieDetail(
-        widget.movie.id,
-      );
+      context.read<MoviesProvider>().loadMovieDetail(widget.movie.id);
     });
   }
 
-Future<void> _openTrailer() async {
-  final provider =
-      context.read<MoviesProvider>();
+  Future<void> _openTrailer() async {
+    final provider = context.read<MoviesProvider>();
 
-  final trailerKey =
-      provider.selectedMovieDetail?.trailerKey;
+    final trailerKey = provider.selectedMovieDetail?.trailerKey;
 
-  if (trailerKey == null ||
-      trailerKey.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'No se encontró trailer disponible',
-        ),
-      ),
-    );
+    if (trailerKey == null || trailerKey.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se encontró trailer disponible')),
+      );
 
-    return;
+      return;
+    }
+
+    final url = Uri.parse('https://www.youtube.com/watch?v=$trailerKey');
+
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
-
-  final url = Uri.parse(
-    'https://www.youtube.com/watch?v=$trailerKey',
-  );
-
-  await launchUrl(
-    url,
-    mode: LaunchMode.externalApplication,
-  );
-}
 
   @override
   Widget build(BuildContext context) {
     final movie = widget.movie;
 
-    final provider =
-    context.watch<MoviesProvider>();
+    final provider = context.watch<MoviesProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.secondary1000,
@@ -77,9 +59,7 @@ Future<void> _openTrailer() async {
           color: AppColors.accent500,
           backgroundColor: AppColors.secondary900,
           onRefresh: () async {
-            await context.read<MoviesProvider>().loadMovieDetail(
-              movie.id,
-            );
+            await context.read<MoviesProvider>().loadMovieDetail(movie.id);
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -120,7 +100,11 @@ Future<void> _openTrailer() async {
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Center(
-                        child: AnimatedFavoriteButton(movieId: movie.id, size: 28, movieTitle: movie.title),
+                        child: AnimatedFavoriteButton(
+                          movieId: movie.id,
+                          size: 28,
+                          movieTitle: movie.title,
+                        ),
                       ),
                     ),
                   ],
@@ -165,16 +149,15 @@ Future<void> _openTrailer() async {
                         icon: Icons.movie_creation_outlined,
                         title: 'Director',
                         value:
-                          provider.selectedMovieDetail?.director ??
-                          'Cargando...',
+                            provider.selectedMovieDetail?.director ??
+                            'Cargando...',
                       ),
                       MovieTechInfo(
                         icon: Icons.access_time,
                         title: 'Duración',
-                        value:
-                            provider.selectedMovieDetail != null
-                                ? '${provider.selectedMovieDetail!.runtime} min'
-                                : movie.duration,
+                        value: provider.selectedMovieDetail != null
+                            ? '${provider.selectedMovieDetail!.runtime} min'
+                            : movie.duration,
                       ),
                       MovieTechInfo(
                         icon: Icons.category_outlined,
@@ -189,49 +172,58 @@ Future<void> _openTrailer() async {
 
                 const SizedBox(height: 24),
 
-                const Text(
-                  'Reparto',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      'Reparto',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        final cast = context
+                            .read<MoviesProvider>()
+                            .selectedMovieDetail!
+                            .cast;
+                        context.push('/full-cast', extra: cast);
+                      },
+                      child: const Text(
+                        'Ver más',
+                        style: TextStyle(
+                          color: AppColors.primary500,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 14),
 
-                SizedBox(
-                  height: 110,
-                  child: provider.loadingMovieDetail
-                      ? const Center(
-                          child:
-                              CircularProgressIndicator(),
-                        )
-                      : ListView.builder(
-                          scrollDirection:
-                              Axis.horizontal,
-                          itemCount:
-                              provider
-                                  .selectedMovieDetail
-                                  ?.cast
-                                  .length ??
-                              0,
-                          itemBuilder:
-                              (context, index) {
-                            final actor =
-                                provider
-                                    .selectedMovieDetail!
-                                    .cast[index];
-
-                            return MovieActorCard(
-                              name: actor.name,
-                              role: actor.character,
-                              imageUrl:
-                                  actor.imageUrl,
-                            );
-                          },
-                        ),
-                ),
+                provider.loadingMovieDetail
+                    ? const SizedBox(
+                        height: 110,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : Row(
+                        children: [
+                          for (int i = 0;
+                              i < min(4, provider.selectedMovieDetail?.cast.length ?? 0);
+                              i++)
+                            Expanded(
+                              child: MovieActorCard(
+                                name: provider.selectedMovieDetail!.cast[i].name,
+                                role: provider.selectedMovieDetail!.cast[i].character,
+                                imageUrl: provider.selectedMovieDetail!.cast[i].imageUrl,
+                              ),
+                            ),
+                        ],
+                      ),
 
                 const SizedBox(height: 22),
 
@@ -260,11 +252,13 @@ class _HeaderMovie extends StatelessWidget {
   Widget build(BuildContext context) {
     // 📌 1. Escuchamos al provider para saber cuando se cargue el detalle de la película
     final provider = context.watch<MoviesProvider>();
-    
+
     // 📌 2. Evaluamos: si ya cargó el detalle, usamos el 'runtime', si no, el 'duration' por defecto
     final displayDuration = provider.selectedMovieDetail != null
         ? '${provider.selectedMovieDetail!.runtime} min'
-        : movie.duration.isNotEmpty ? movie.duration : '...'; // Ponemos '...' mientras carga
+        : movie.duration.isNotEmpty
+        ? movie.duration
+        : '...'; // Ponemos '...' mientras carga
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
@@ -342,16 +336,16 @@ class _HeaderMovie extends StatelessWidget {
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
                       const SizedBox(width: 10),
-                      
+
                       // 📌 3. Aquí inyectamos nuestra variable calculada
                       Text(
-                        displayDuration, 
+                        displayDuration,
                         style: const TextStyle(
                           color: AppColors.white,
                           fontSize: 12,
                         ),
                       ),
-                      
+
                       const SizedBox(width: 10),
                       const Text(
                         '•',

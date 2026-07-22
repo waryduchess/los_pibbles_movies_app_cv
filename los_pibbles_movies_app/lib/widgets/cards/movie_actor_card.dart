@@ -15,43 +15,37 @@ class MovieActorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 18),
-      child: SizedBox(
-        width: 72,
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 31,
-              backgroundColor: AppColors.secondary800,
-              backgroundImage: NetworkImage(imageUrl),
-              onBackgroundImageError: (_, __) {},
-            ),
-            const SizedBox(height: 7),
-            Text(
-              name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              role,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 10,
-              ),
-            ),
-          ],
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 31,
+          backgroundColor: AppColors.secondary800,
+          backgroundImage: NetworkImage(imageUrl),
+          onBackgroundImageError: (_, __) {},
         ),
-      ),
+        const SizedBox(height: 7),
+        Text(
+          name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: AppColors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Text(
+          role,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 10,
+          ),
+        ),
+      ],
     );
   }
 }

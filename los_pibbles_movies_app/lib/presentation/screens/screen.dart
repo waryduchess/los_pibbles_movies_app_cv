@@ -17,6 +17,7 @@ export 'settings/terms_screen.dart';
 
 
 export './details/movie_detail_screen.dart';
+export './details/full_cast_screen.dart';
 
 export 'main_shell/main_shell.dart';
 
