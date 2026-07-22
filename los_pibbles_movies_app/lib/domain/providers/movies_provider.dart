@@ -81,6 +81,10 @@ class MoviesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<Movie> getMovieById(int movieId) async {
+    return _repository.getMovieById(movieId);
+  }
+
   // Cargar detalle de película
   Future<void> loadMovieDetail(int movieId) async {
     loadingMovieDetail = true;

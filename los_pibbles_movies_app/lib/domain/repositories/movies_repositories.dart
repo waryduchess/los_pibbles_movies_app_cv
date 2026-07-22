@@ -3,6 +3,8 @@ import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/presentation/models/movie_model.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie_actor.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie_detail.dart';
+import 'package:los_pibbles_movies_app/domain/entities/actor_detail.dart';
+import 'package:los_pibbles_movies_app/domain/entities/actor_movie_credit.dart';
 
 class MoviesRepository {
   final TmdbApiClient _client = TmdbApiClient();
@@ -109,17 +111,34 @@ class MoviesRepository {
   }
 
   return MovieDetail(
-
     director: director,
-
     cast: cast,
-
     trailerKey: trailerKey,
-
     runtime: detail['runtime'] ?? 0,
-
-
   );
+}
 
+Future<ActorDetail> getActorDetail(int personId) async {
+  final person = await _client.get('person/$personId');
+  final credits = await _client.get('person/$personId/movie_credits');
+
+  final movieCredits = (credits['cast'] as List)
+      .map((e) => ActorMovieCredit.fromJson(e))
+      .toList();
+
+  final profilePath = person['profile_path'] as String?;
+
+  return ActorDetail(
+    id: person['id'] ?? personId,
+    name: person['name'] ?? '',
+    biography: person['biography'] ?? '',
+    birthday: person['birthday'],
+    placeOfBirth: person['place_of_birth'],
+    profileUrl: profilePath != null
+        ? 'https://image.tmdb.org/t/p/w500$profilePath'
+        : '',
+    knownForDepartment: person['known_for_department'] ?? 'Acting',
+    movieCredits: movieCredits,
+  );
 }
 }

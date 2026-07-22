@@ -3,6 +3,7 @@ import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie_actor.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/screen.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/details/full_cast_screen.dart';
+import 'package:los_pibbles_movies_app/presentation/screens/details/actor_detail_screen.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/settings/change_email_screen.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/settings/change_password_screen.dart';
 import 'package:los_pibbles_movies_app/presentation/screens/settings/change_name_screen.dart';
@@ -64,6 +65,14 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final cast = state.extra as List<MovieActor>;
         return FullCastScreen(cast: cast);
+      },
+    ),
+
+    GoRoute(
+      path: '/actor-detail',
+      builder: (context, state) {
+        final actorId = state.extra as int;
+        return ActorDetailScreen(actorId: actorId);
       },
     ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie_actor.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/cards/movie_actor_card.dart';
@@ -26,6 +27,7 @@ class FullCastScreen extends StatelessWidget {
           name: actor.name,
           role: actor.character,
           imageUrl: actor.imageUrl,
+          onTap: () => context.push('/actor-detail', extra: actor.id),
         )).toList(),
       ),
     );

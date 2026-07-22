@@ -1,9 +1,11 @@
 class MovieActor {
+  final int id;
   final String name;
   final String character;
   final String imageUrl;
 
   const MovieActor({
+    required this.id,
     required this.name,
     required this.character,
     required this.imageUrl,
@@ -11,6 +13,7 @@ class MovieActor {
 
   factory MovieActor.fromJson(Map<String, dynamic> json) {
     return MovieActor(
+      id: json['id'] ?? 0,
       name: json['name'] ?? '',
       character: json['character'] ?? '',
       imageUrl: json['profile_path'] != null
