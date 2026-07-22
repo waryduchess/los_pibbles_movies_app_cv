@@ -20,7 +20,16 @@ class ProfileService {
     SessionManager.clear();
   }
   
-  // 📌 1. Cambiar Contraseña
+  // 📌 1. Establecer contraseña (para cuentas Google, sin validar actual)
+  static Future<void> setPassword({
+    required int userId,
+    required String newPassword,
+  }) async {
+    final datasource = AuthBackendDatasource();
+    await datasource.setPassword(userId, newPassword);
+  }
+
+  // 📌 1b. Cambiar Contraseña (validando la actual)
   static Future<void> changePassword({
     required int userId,
     required String currentPassword,

@@ -4,7 +4,8 @@ class SessionManager {
   static String? fotoPerfil;
   static DateTime? loginTime;
   static String? userEmail; 
-  
+  static bool isGoogleAccount = false;
+
   static String? memberSince;
   static int? favoritesCount;
 
@@ -39,6 +40,7 @@ class SessionManager {
     userName = null;
     fotoPerfil = null;
     userEmail = null;
+    isGoogleAccount = false;
     loginTime = null;
     memberSince = null;
     favoritesCount = null;

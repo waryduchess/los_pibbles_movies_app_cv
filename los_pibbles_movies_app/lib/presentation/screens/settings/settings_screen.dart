@@ -173,12 +173,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           icon: Icons.lock_outline,
                           iconColor: Colors.greenAccent,
                           title: 'Cambiar contraseña',
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => const ChangePasswordDialog(),
-                            );
+                          onTap: () async {
+                            await context.push('/change-password');
                           },
                         ),
                         MenuItemData(
@@ -186,11 +182,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           iconColor: AppColors.primary500,
                           title: 'Cambiar nombre y apellido',
                           onTap: () async {
-                            final success = await showDialog<bool>(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => const ChangeNameDialog(),
-                            );
+                            final success = await context.push<bool>('/change-name');
                             if (success == true) setState(() {});
                           },
                         ),

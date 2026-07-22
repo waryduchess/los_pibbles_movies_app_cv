@@ -332,6 +332,24 @@ class AuthBackendDatasource {
     }
   }
 
+  /// 3b. Establece una contraseña sin validar la actual (para cuentas Google)
+  Future<void> setPassword(int userId, String newPassword) async {
+    final conn = await DBConnection.getConnection();
+    try {
+      await conn.execute(
+        "UPDATE usuarios SET password = :new_password WHERE id_usuario = :id_usuario",
+        {
+          "new_password": _processPassword(newPassword),
+          "id_usuario": userId,
+        },
+      );
+    } catch (e) {
+      throw Exception(e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      await conn.close();
+    }
+  }
+
   /// 3. Cambia la contraseña validando primero la actual
   Future<void> changePasswordWithValidation(int userId, String currentPassword, String newPassword) async {
     final conn = await DBConnection.getConnection();

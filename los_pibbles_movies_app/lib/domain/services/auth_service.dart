@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:los_pibbles_movies_app/domain/infrastructure/db_connection.dart';
+import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 
 class AuthService {
   static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
@@ -62,7 +63,7 @@ class AuthService {
       return {
         'success': true,
         'userId': user['id_usuario']!,
-        'userName': user['nombres']!,
+        'userName': '${user['nombres']} ${user['apellidos']}'.trim(),
         'fotoPerfil': user['foto_perfil'],
         'userEmail': user['correo']!, 
         'memberSince': user['fecha_registro'].toString(), // Convertimos a String por seguridad
@@ -127,6 +128,8 @@ class AuthService {
       final nombres = nameParts.isNotEmpty ? nameParts.first : 'Usuario';
       final apellidos = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
+      SessionManager.isGoogleAccount = true;
+
       final conn = await DBConnection.getConnection();
       try {
         // 👇 3. Agregamos los mismos campos al SELECT de Google
@@ -134,6 +137,7 @@ class AuthService {
           '''SELECT 
                id_usuario, 
                nombres, 
+               apellidos, 
                correo,
                foto_perfil,
                fecha_registro,
@@ -149,7 +153,7 @@ class AuthService {
             'success': true,
             'data': {
               'userId': user['id_usuario']!,
-              'userName': user['nombres']!,
+              'userName': '${user['nombres']} ${user['apellidos']}'.trim(),
               'fotoPerfil': user['foto_perfil'],
               'userEmail': user['correo']!, 
               'memberSince': user['fecha_registro'].toString(),
