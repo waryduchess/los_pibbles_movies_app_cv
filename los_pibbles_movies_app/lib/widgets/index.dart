@@ -60,4 +60,5 @@ export 'comments/home_comments_section.dart';
 export 'movies/movie_card_item.dart';
 export 'ui_elements/search_bar_widget.dart';
 export 'chips/tag_chip.dart';
+export 'movies/movie_header_video_widget.dart';
 

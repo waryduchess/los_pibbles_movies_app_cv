@@ -1,13 +1,15 @@
 import 'dart:math';
-import 'package:los_pibbles_movies_app/domain/providers/movies_provider.dart';
-import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
+import 'package:los_pibbles_movies_app/domain/providers/movies_provider.dart';
+import 'package:los_pibbles_movies_app/domain/services/session_manager.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
-import 'package:provider/provider.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -30,26 +32,22 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Future<void> _openTrailer() async {
     final provider = context.read<MoviesProvider>();
-
     final trailerKey = provider.selectedMovieDetail?.trailerKey;
 
     if (trailerKey == null || trailerKey.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se encontró trailer disponible')),
+        const SnackBar(content: Text('No se encontró trailer externo disponible')),
       );
-
       return;
     }
 
     final url = Uri.parse('https://www.youtube.com/watch?v=$trailerKey');
-
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   @override
   Widget build(BuildContext context) {
     final movie = widget.movie;
-
     final provider = context.watch<MoviesProvider>();
 
     return Scaffold(
@@ -67,6 +65,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 🎬 Header principal con soporte para reproductor de YouTube
                 _HeaderMovie(movie: movie),
 
                 const SizedBox(height: 14),
@@ -79,7 +78,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         child: ElevatedButton.icon(
                           onPressed: _openTrailer,
                           icon: const Icon(Icons.play_arrow, size: 18),
-                          label: const Text('Ver trailer'),
+                          label: const Text('Ver trailer en YouTube'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary600,
                             foregroundColor: AppColors.white,
@@ -148,9 +147,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       MovieTechInfo(
                         icon: Icons.movie_creation_outlined,
                         title: 'Director',
-                        value:
-                            provider.selectedMovieDetail?.director ??
-                            'Cargando...',
+                        value: provider.selectedMovieDetail?.director ?? 'Cargando...',
                       ),
                       MovieTechInfo(
                         icon: Icons.access_time,
@@ -187,9 +184,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       onTap: () {
                         final cast = context
                             .read<MoviesProvider>()
-                            .selectedMovieDetail!
-                            .cast;
-                        context.push('/full-cast', extra: cast);
+                            .selectedMovieDetail
+                            ?.cast;
+                        if (cast != null) {
+                          context.push('/full-cast', extra: cast);
+                        }
                       },
                       child: const Text(
                         'Ver más',
@@ -243,22 +242,72 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 }
 
-class _HeaderMovie extends StatelessWidget {
+// ============================================================================
+// 🎬 SUBWIDGET HEADER CON YOUTUBE PLAYER INLINE
+// ============================================================================
+
+class _HeaderMovie extends StatefulWidget {
   final Movie movie;
 
   const _HeaderMovie({required this.movie});
 
   @override
-  Widget build(BuildContext context) {
-    // 📌 1. Escuchamos al provider para saber cuando se cargue el detalle de la película
-    final provider = context.watch<MoviesProvider>();
+  State<_HeaderMovie> createState() => _HeaderMovieState();
+}
 
-    // 📌 2. Evaluamos: si ya cargó el detalle, usamos el 'runtime', si no, el 'duration' por defecto
-    final displayDuration = provider.selectedMovieDetail != null
-        ? '${provider.selectedMovieDetail!.runtime} min'
+class _HeaderMovieState extends State<_HeaderMovie> {
+  YoutubePlayerController? _youtubeController;
+  bool _isPlaying = false;
+
+  @override
+  void dispose() {
+    _youtubeController?.dispose();
+    super.dispose();
+  }
+
+  void _playTrailer(String? trailerKey) {
+    if (trailerKey == null || trailerKey.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay trailer de YouTube disponible para esta película'),
+          backgroundColor: AppColors.secondary800,
+        ),
+      );
+      return;
+    }
+
+    if (_youtubeController == null) {
+      _youtubeController = YoutubePlayerController(
+        initialVideoId: trailerKey,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+          enableCaption: false,
+        ),
+      );
+    } else {
+      _youtubeController!.load(trailerKey);
+    }
+
+    setState(() {
+      _isPlaying = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<MoviesProvider>();
+    final movie = widget.movie;
+    final movieDetail = provider.selectedMovieDetail;
+
+    final displayDuration = movieDetail != null
+        ? '${movieDetail.runtime} min'
         : movie.duration.isNotEmpty
-        ? movie.duration
-        : '...'; // Ponemos '...' mientras carga
+            ? movie.duration
+            : '...';
+
+    // Se obtiene el trailerKey generado desde la API
+    final trailerKey = movieDetail?.trailerKey;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
@@ -268,109 +317,153 @@ class _HeaderMovie extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              movie.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: AppColors.secondary800,
-                  child: const Icon(
-                    Icons.movie,
-                    color: AppColors.white,
-                    size: 70,
+            // 1. Imagen de portada O Reproductor de YouTube
+            _isPlaying && _youtubeController != null
+                ? YoutubePlayer(
+                    controller: _youtubeController!,
+                    showVideoProgressIndicator: true,
+                    progressIndicatorColor: AppColors.primary500,
+                    progressColors: const ProgressBarColors(
+                      playedColor: AppColors.primary500,
+                      handleColor: AppColors.accent500,
+                    ),
+                  )
+                : Image.network(
+                    movie.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: AppColors.secondary800,
+                        child: const Icon(
+                          Icons.movie,
+                          color: AppColors.white,
+                          size: 70,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.black.withOpacity(0.20),
-                    AppColors.black.withOpacity(0.85),
+
+            // 2. Capas superiores (Gradiante, botones e info) solo visibles antes de dar Play
+            if (!_isPlaying) ...[
+              // Overlay Gradiente Oscuro
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.black.withOpacity(0.20),
+                      AppColors.black.withOpacity(0.85),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Botón Morado de Play Central
+              Center(
+                child: GestureDetector(
+                  onTap: () => _playTrailer(trailerKey),
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary500,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withOpacity(0.4),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow_rounded,
+                      color: AppColors.white,
+                      size: 42,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Botón de Regresar
+              Positioned(
+                top: 14,
+                left: 14,
+                child: _CircleActionButton(
+                  icon: Icons.arrow_back,
+                  color: AppColors.white,
+                  onTap: () => context.pop(),
+                ),
+              ),
+
+              // Detalles de la película
+              Positioned(
+                left: 18,
+                right: 18,
+                bottom: 18,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      movie.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 21,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text(
+                          movie.year,
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          '•',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          displayDuration,
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          '•',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                        const SizedBox(width: 10),
+                        const Icon(
+                          Icons.star,
+                          color: AppColors.warning,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          movie.rating,
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-            ),
-            Positioned(
-              top: 14,
-              left: 14,
-              child: _CircleActionButton(
-                icon: Icons.arrow_back,
-                color: AppColors.white,
-                onTap: () => context.pop(),
-              ),
-            ),
-            Positioned(
-              left: 18,
-              right: 18,
-              bottom: 18,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    movie.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Text(
-                        movie.year,
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        '•',
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                      const SizedBox(width: 10),
-
-                      // 📌 3. Aquí inyectamos nuestra variable calculada
-                      Text(
-                        displayDuration,
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-
-                      const SizedBox(width: 10),
-                      const Text(
-                        '•',
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                      const SizedBox(width: 10),
-                      const Icon(
-                        Icons.star,
-                        color: AppColors.warning,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        movie.rating,
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            ],
           ],
         ),
       ),

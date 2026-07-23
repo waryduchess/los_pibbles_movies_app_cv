@@ -21,7 +21,6 @@ class DBConnection {
       databaseName: _db,
     );
     await conn.connect();
-    print('Conexión MySQL exitosa');
     return conn;
   }
 }

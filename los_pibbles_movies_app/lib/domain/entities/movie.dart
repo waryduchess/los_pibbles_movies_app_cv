@@ -1,55 +1,57 @@
-import 'package:los_pibbles_movies_app/presentation/models/movie_model.dart';
+  import 'package:los_pibbles_movies_app/presentation/models/movie_model.dart';
 
-class Movie {
-  final int id;
-  final String title;
-  final String overview;
-  final String imageUrl;
-  final String rating;
-  final String year;
-  final String duration;
-  final String subtitle;
-  final bool isFavorite;
-  final List<String> genres;
-  final List<String> featuredTags;
-  final DateTime? releaseDate;
+  class Movie {
+    final int id;
+    final String title;
+    final String overview;
+    final String imageUrl;
+    final String rating;
+    final String year;
+    final String duration;
+    final String subtitle;
+    final bool isFavorite;
+    final List<String> genres;
+    final List<String> featuredTags;
+    final DateTime? releaseDate;
+    final String? videoUrl;
 
-  String get description => overview;
+    String get description => overview;
 
-  const Movie({
-    required this.id,
-    required this.title,
-    required this.overview,
-    required this.imageUrl,
-    required this.rating,
-    required this.year,
-    required this.duration,
-    required this.subtitle,
-    this.isFavorite = false,
-    this.genres = const [],
-    this.releaseDate,
-    this.featuredTags = const [],
-  });
+    const Movie({
+      required this.id,
+      required this.title,
+      required this.overview,
+      required this.imageUrl,
+      required this.rating,
+      required this.year,
+      required this.duration,
+      required this.subtitle,
+      this.isFavorite = false,
+      this.genres = const [],
+      this.releaseDate,
+      this.featuredTags = const [],
+      this.videoUrl,
+    });
 
-  factory Movie.fromDto(MovieDto dto, Map<int, String> genreMap) {
-    final genreNames =
-        dto.genreIds.map((id) => genreMap[id] ?? 'Desconocido').toList();
+    factory Movie.fromDto(MovieDto dto, Map<int, String> genreMap) {
+      final genreNames =
+          dto.genreIds.map((id) => genreMap[id] ?? 'Desconocido').toList();
 
-    return Movie(
-      id: dto.id,
-      title: dto.title,
-      overview: dto.overview,
-      imageUrl: dto.posterPath != null
-          ? 'https://image.tmdb.org/t/p/w500${dto.posterPath}'
-          : '',
-      rating: dto.voteAverage.toStringAsFixed(1),
-      year: dto.releaseDate != null && dto.releaseDate!.length >= 4
-          ? dto.releaseDate!.substring(0, 4)
-          : '—',
-      duration: dto.runtime != null ? '${dto.runtime} min' : '—',
-      subtitle: genreNames.isNotEmpty ? genreNames.first : 'Película',
-      genres: genreNames,
-      featuredTags: genreNames.take(3).toList(),
-    );
+      return Movie(
+        id: dto.id,
+        title: dto.title,
+        overview: dto.overview,
+        imageUrl: dto.posterPath != null
+            ? 'https://image.tmdb.org/t/p/w500${dto.posterPath}'
+            : '',
+        rating: dto.voteAverage.toStringAsFixed(1),
+        year: dto.releaseDate != null && dto.releaseDate!.length >= 4
+            ? dto.releaseDate!.substring(0, 4)
+            : '—',
+        duration: dto.runtime != null ? '${dto.runtime} min' : '—',
+        subtitle: genreNames.isNotEmpty ? genreNames.first : 'Película',
+        genres: genreNames,
+        featuredTags: genreNames.take(3).toList(),
+      );
+    }
   }
-}
