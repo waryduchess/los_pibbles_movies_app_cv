@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
 import 'package:los_pibbles_movies_app/domain/providers/favorites_provider.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
-import 'package:provider/provider.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
+
+// 👇 Asegúrate de importar tus servicios
+import 'package:los_pibbles_movies_app/domain/services/report_service.dart';
+import 'package:los_pibbles_movies_app/domain/services/session_manager.dart'; 
+
 
 class FavoritesScreen extends StatefulWidget {
   static const name = 'favorites--screen';
@@ -123,7 +129,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       );
     }
 
-    // 🔥 Ahora siempre devolvemos el Scaffold principal con el título
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -131,9 +136,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              // 🔥 Título y Botón de Descarga
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Mis Favoritos',
                     style: TextStyle(
                       color: AppColors.white,
@@ -141,10 +148,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  
+                  // 🔥 Aquí llamamos a tu nuevo widget, pasándole la lista _movies
+                  // Solo lo mostramos si hay películas en la lista
+                  if (_movies.isNotEmpty) 
+                    GenerateReportButton(favoriteMovies: _movies),
                 ],
               ),
               const SizedBox(height: 24),
-              // Pasamos el provider a _buildBody para que maneje el estado vacío
               Expanded(child: _buildBody(provider)), 
             ],
           ),
@@ -153,9 +164,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  // Recibe el provider para saber si hay películas o no
   Widget _buildBody(FavoritesProvider provider) {
-    // 1. Estado: No hay favoritos
     if (provider.favoriteMovieIds.isEmpty) {
       return Center(
         child: Column(
@@ -165,24 +174,22 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             const SizedBox(height: 16),
             Text(
               'No tienes películas favoritas',
-              style: TextStyle(color: AppColors.white.withValues(alpha: 0.7), fontSize: 16),
+              style: TextStyle(color: AppColors.white.withOpacity(0.7), fontSize: 16),
             ),
             const SizedBox(height: 8),
             Text(
               'Toca el corazón en cualquier película para agregarla',
-              style: TextStyle(color: AppColors.white.withValues(alpha: 0.45), fontSize: 13),
+              style: TextStyle(color: AppColors.white.withOpacity(0.45), fontSize: 13),
             ),
           ],
         ),
       );
     }
 
-    // 2. Estado: Cargando películas
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // 3. Estado: Error al cargar
     if (_errorMessage != null) {
       return Center(
         child: Column(
@@ -199,10 +206,81 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       );
     }
 
-    // 4. Estado: Mostrar lista de películas
     return ListView.builder(
       itemCount: _movies.length,
       itemBuilder: (context, index) => MovieCardItem(movie: _movies[index]),
+    );
+  }
+}
+
+// ============================================================================
+// 📄 NUEVO WIDGET INDEPENDIENTE PARA EL BOTÓN DEL REPORTE
+// Puedes dejarlo aquí o moverlo a "lib/widgets/favorites/generate_report_button.dart"
+// ============================================================================
+class GenerateReportButton extends StatefulWidget {
+  final List<Movie> favoriteMovies;
+
+  const GenerateReportButton({super.key, required this.favoriteMovies});
+
+  @override
+  State<GenerateReportButton> createState() => _GenerateReportButtonState();
+}
+
+class _GenerateReportButtonState extends State<GenerateReportButton> {
+  bool _isGenerating = false;
+  final ReportService _reportService = ReportService();
+
+  Future<void> _handleGenerateReport() async {
+    setState(() => _isGenerating = true);
+
+    try {
+      // Obtenemos el nombre del usuario (si no tienes SessionManager usa 'Usuario')
+      final userName = SessionManager.userName ?? 'Usuario'; 
+      
+      await _reportService.generateFavoritesReport(widget.favoriteMovies, userName);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Generando y abriendo PDF...'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isGenerating = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.secondary900,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: IconButton(
+        icon: _isGenerating 
+            ? const SizedBox(
+                width: 20, 
+                height: 20, 
+                child: CircularProgressIndicator(color: AppColors.primary500, strokeWidth: 2)
+              )
+            : const Icon(Icons.picture_as_pdf_outlined, color: AppColors.primary500),
+        onPressed: _isGenerating ? null : _handleGenerateReport,
+        tooltip: 'Descargar Reporte PDF',
+      ),
     );
   }
 }
