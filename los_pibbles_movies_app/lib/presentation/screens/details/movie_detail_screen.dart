@@ -226,6 +226,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
                 const SizedBox(height: 22),
 
+                if (provider.selectedMovieDetail?.trailerKey != null &&
+                    provider.selectedMovieDetail!.trailerKey.isNotEmpty)
+                  MovieScenesCarousel(
+                    imageUrls: [
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sddefault.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sd1.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sd2.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sd3.jpg',
+                    ],
+                  ),
+
+                const SizedBox(height: 22),
+
                 if (SessionManager.userId != null)
                   MovieCommentsSection(
                     movieId: movie.id,
