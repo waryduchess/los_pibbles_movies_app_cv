@@ -16,6 +16,8 @@ class ActorDetailScreen extends StatefulWidget {
 }
 
 class _ActorDetailScreenState extends State<ActorDetailScreen> {
+  bool _isBioExpanded = false; // NUEVO: controla si se muestra toda la biografía
+
   @override
   void initState() {
     super.initState();
@@ -141,6 +143,13 @@ class _ActorDetailScreenState extends State<ActorDetailScreen> {
   Widget _buildBiography(ActorDetail actor) {
     if (actor.biography.isEmpty) return const SizedBox.shrink();
 
+    // NUEVO: límite de caracteres para el texto truncado
+    const int limiteCaracteres = 150;
+    final bool esLargo = actor.biography.length > limiteCaracteres;
+    final String textoMostrado = _isBioExpanded || !esLargo
+        ? actor.biography
+        : '${actor.biography.substring(0, limiteCaracteres)}...';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -156,13 +165,33 @@ class _ActorDetailScreenState extends State<ActorDetailScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            actor.biography,
+            textoMostrado,
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 13,
               height: 1.6,
             ),
           ),
+          // NUEVO: botón "Ver más" / "Ver menos"
+          if (esLargo)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isBioExpanded = !_isBioExpanded;
+                  });
+                },
+                child: Text(
+                  _isBioExpanded ? 'Ver menos' : 'Ver más',
+                  style: const TextStyle(
+                    color: AppColors.primary300,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -187,7 +216,7 @@ class _ActorDetailScreenState extends State<ActorDetailScreen> {
         ),
         const SizedBox(height: 14),
         SizedBox(
-          height: 230,
+          height: 260, // NUEVO: se aumentó de 230 a 260 para que el texto no se desborde (imagen sigue en 175)
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
