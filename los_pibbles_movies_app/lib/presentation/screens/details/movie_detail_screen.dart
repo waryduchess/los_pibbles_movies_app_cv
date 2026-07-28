@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -208,29 +209,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         height: 110,
                         child: Center(child: CircularProgressIndicator()),
                       )
-                    : SizedBox(
-                        height: 110,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: provider.selectedMovieDetail!.cast.length,
-                          itemBuilder: (context, index) {
-                            final actor = provider.selectedMovieDetail!.cast[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 16),
-                              child: SizedBox(
-                                width: 62,
-                                child: MovieActorCard(
-                                  name: actor.name,
-                                  role: actor.character,
-                                  imageUrl: actor.imageUrl,
-                                  onTap: () => context.push('/actor-detail',
-                                      extra: actor.id),
-                                ),
+                    : Row(
+                        children: [
+                          for (int i = 0;
+                              i < min(4, provider.selectedMovieDetail?.cast.length ?? 0);
+                              i++)
+                            Expanded(
+                              child: MovieActorCard(
+                                name: provider.selectedMovieDetail!.cast[i].name,
+                                role: provider.selectedMovieDetail!.cast[i].character,
+                                imageUrl: provider.selectedMovieDetail!.cast[i].imageUrl,
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                        ],
                       ),
 
                 const SizedBox(height: 22),
