@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:los_pibbles_movies_app/domain/entities/app_exception.dart';
-import 'package:go_router/go_router.dart';
 import 'package:los_pibbles_movies_app/domain/entities/movie.dart';
 import 'package:los_pibbles_movies_app/domain/repositories/movies_repositories.dart';
 import 'package:los_pibbles_movies_app/resources/color/colors.dart';
 import 'package:los_pibbles_movies_app/widgets/index.dart';
-
 
 class SearchScreen extends StatefulWidget {
   static const name = 'search--screen';
@@ -39,12 +37,12 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (query.trim().isEmpty) {
-      setState(() {
-        _results = [];
-        _isLoading = false;
-        _hasSearched = false;
-        _errorType = null;
-      });
+        setState(() {
+          _results = [];
+          _isLoading = false;
+          _hasSearched = false;
+          _errorType = null;
+        });
         return;
       }
       _performSearch(query.trim());

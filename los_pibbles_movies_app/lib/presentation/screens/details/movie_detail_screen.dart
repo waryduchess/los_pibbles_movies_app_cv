@@ -239,10 +239,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     provider.selectedMovieDetail!.trailerKey.isNotEmpty)
                   MovieScenesCarousel(
                     imageUrls: [
-                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sddefault.jpg',
-                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sd1.jpg',
-                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sd2.jpg',
-                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/sd3.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/maxresdefault.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/maxres1.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/maxres2.jpg',
+                      'https://img.youtube.com/vi/${provider.selectedMovieDetail!.trailerKey}/maxres3.jpg',
                     ],
                   ),
 

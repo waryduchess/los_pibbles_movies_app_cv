@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Escala de espaciado base 8px y radios de borde.
 class AppSpacing {
   static const double xs = 8.0;
@@ -14,6 +12,4 @@ class AppSpacing {
   static const double radiusMd = 12.0;
   static const double radiusLg = 16.0;
   static const double radiusPill = 999.0;
-
-  
 }
